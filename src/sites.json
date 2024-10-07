@@ -1,0 +1,22 @@
+[
+  {
+    "name": "DuckDuckGo AI",
+    "url": "https://duckduckgo.com/?q=duckduckgo+ai+chat&ia=chat&duckai=1",
+    "icon": "/searchEngines/DuckDuckgo.png"
+  },
+  {
+    "name": "Discord",
+    "url": "https://discord.com/",
+    "icon": "/logos/discord.svg"
+  },
+  {
+    "name": "Hianime",
+    "url": "https://hianime.to",
+    "icon": "/logos/hianime.png"
+  },
+  {
+    "name": "Phantom games",
+    "url": "https://phantom.delusionz.xyz",
+    "icon": "/logos/phantom.png"
+  }
+]
