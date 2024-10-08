@@ -186,11 +186,12 @@ function App() {
         }`}
       >
         <div className="flex-col space-y-4 flex w-full h-full items-center justify-center">
-          <LetterPullup
+          <h2 className="font-display text-center text-2xl text-primary font-semibold  md:text-7xl md:leading-[5rem]">Emerald</h2>
+          {/*<LetterPullup
             words="Emerald"
             className="font-display text-center text-2xl text-primary font-semibold  md:text-7xl md:leading-[5rem]"
             // delay={0.2}
-          />
+          />*/}
           <div className="w-3/12 relative rounded-2xl focus:border-primary border border-input flex space-x-2 items-center justify-center pr-2">
             <Input
               className="text-white/40 w-[95%] rounded-2xl focus-visible:ring-0 border-none"
