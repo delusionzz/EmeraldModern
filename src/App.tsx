@@ -186,7 +186,7 @@ function App() {
         }`}
       >
         <div className="flex-col space-y-4 flex w-full h-full items-center justify-center">
-          <h2 className="font-display text-center text-2xl text-primary font-semibold  md:text-7xl md:leading-[5rem]">Emerald</h2>
+          <h2 className="select-none font-display text-center text-2xl text-primary font-semibold  md:text-7xl md:leading-[5rem]">Emerald</h2>
           {/*<LetterPullup
             words="Emerald"
             className="font-display text-center text-2xl text-primary font-semibold  md:text-7xl md:leading-[5rem]"
