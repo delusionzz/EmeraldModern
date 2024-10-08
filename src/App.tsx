@@ -29,6 +29,11 @@ function App() {
   useSw("/sw.js");
 
   ReactGA.initialize("G-PBTEBTLRLZ");
+  ReactGA.event("page_view", {
+    page_location: window.location.href,
+    page_title: "Emerald",
+    user_agent: navigator.userAgent ?? "no ua??"
+  })
   useEffect(() => {
     setSuggestions([]);
     const delayDebounceFn = setTimeout(async () => {
