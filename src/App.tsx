@@ -1,7 +1,7 @@
 import GridPattern from "@/components/ui/grid-pattern";
 import { cn } from "./lib/utils";
 import { Input } from "./components/ui/input";
-import LetterPullup from "./components/ui/letter-pullup";
+// import LetterPullup from "./components/ui/letter-pullup";
 import { useSettings } from "./store";
 import PopularSites from "./sites.json";
 import {
