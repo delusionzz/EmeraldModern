@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
+import { Separator } from "./components/ui/separator";
 import Draggable from "react-draggable";
 import { Dock, DockIcon } from "./components/ui/dock";
 import { useEffect, useRef, useState } from "react";
@@ -33,6 +34,14 @@ import { House, Gamepad, Cog, Search, AlignJustify } from "lucide-react";
 import { Xor } from "./components/xor";
 import ReactGA from "react-ga4";
 import useSw from "./components/hooks/useSw";
+
+type Sponser = {
+  title: string;
+  icon: string;
+  url: string;
+  discord: string;
+};
+
 function App() {
   const settingStore = useSettings();
   const [term, setTerm] = useState("");
@@ -40,6 +49,7 @@ function App() {
   const [shouldOpen, setShouldOpen] = useState(false);
   const [openSearch, setOpenSearch] = useState(false);
   const [openSettings, setOpenSettings] = useState(false);
+  const [sponser, setSponser] = useState<Sponser>();
   const frame = useRef<HTMLIFrameElement>(null);
   const dock = useRef<HTMLDivElement>(null);
   useSw("/sw.js");
@@ -67,6 +77,14 @@ function App() {
     };
   }, [term]);
 
+  useEffect(() => {
+    (async () => {
+      const res = await fetch("/api/sponser");
+      const sponser = await res.json();
+      setSponser(sponser as unknown as Sponser);
+    })();
+  }, []);
+
   const containerVariants = {
     hidden: {
       opacity: 0,
@@ -91,9 +109,16 @@ function App() {
       y: 100,
     },
   };
-
+  const canParse = (p: string) => {
+    try {
+      new URL(p);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
   const handleSearch = (p?: string) => {
-    if (p && URL.canParse(p)) {
+    if (p && canParse(p)) {
       setShouldOpen(true);
 
       frame.current!.src = `/~/${settingStore.proxy}/${Xor.encode(p)}`;
@@ -292,8 +317,8 @@ function App() {
             </AnimatePresence>
           </motion.div>
         </div>
-        <motion.div className="min-h-[50%] w-[15%]  border border-card flex absolute right-[10rem] justify-center backdrop-blur-md p-2 bg-transparent transition-colors  rounded-2xl">
-          <div className="relative w-full h-full flex flex-col items-center justify-center space-y-3">
+        <motion.div className="min-h-[50%] w-[16%] border border-card flex absolute right-[10rem] justify-center backdrop-blur-md p-2 bg-transparent transition-colors  rounded-2xl">
+          <div className="relative w-full min-h-full flex flex-col items-center justify-center space-y-3">
             <h2 className="sm:text-xs md:text-sm lg:text-2xl">Popular sites</h2>
             <div className="w-full h-full flex flex-col space-y-2">
               {PopularSites.map((site, index) => (
@@ -308,6 +333,42 @@ function App() {
                   </h3>
                 </div>
               ))}
+            </div>
+            <Separator className="my-4" />
+            <div className="w-full h-full flex flex-col items-center justify-center space-y-2">
+              {sponser !== undefined && (
+                <>
+                  <h2 className="sm:text-xs md:text-sm lg:text-xl">
+                    🌟 Sponser 🌟
+                  </h2>
+                  <motion.div
+                    className="w-full h-full flex items-center justify-center px-4 gap-2 border border-card/40 rounded-2xl select-none cursor-pointer shadow-lg p-3 hover:shadow-2xl transition-shadow"
+                    onClick={() => handleSearch(sponser.url)}
+                    whileHover={{
+                      y: -5,
+                      transition: { duration: 0.1 },
+                    }}
+                  >
+                    <img
+                      src={sponser.icon}
+                      alt=""
+                      className="w-16 h-16 rounded-2xl"
+                    />
+                    <div className="w-full h-full flex flex-col items-center justify-center">
+                      <h3 className="font-bold text-center sm:text-sm md:text-base lg:text-lg">
+                        {sponser.title}
+                      </h3>
+                      <p className="text-center sm:text-xs md:text-xs lg:xs">
+                        Click{" "}
+                        <a href={sponser.discord} className="underline">
+                          here
+                        </a>{" "}
+                        to join their discord!
+                      </p>
+                    </div>
+                  </motion.div>
+                </>
+              )}
             </div>
           </div>
         </motion.div>
