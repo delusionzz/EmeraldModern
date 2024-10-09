@@ -339,7 +339,7 @@ function App() {
               {sponser !== undefined && (
                 <>
                   <h2 className="sm:text-xs md:text-sm lg:text-xl">
-                    🌟 Sponser 🌟
+                    🌟 Sponsor 🌟
                   </h2>
                   <motion.div
                     className="w-full h-full flex items-center justify-center px-4 gap-2 border border-card/40 rounded-2xl select-none cursor-pointer shadow-lg p-3 hover:shadow-2xl transition-shadow"
