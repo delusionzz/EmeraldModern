@@ -3,6 +3,7 @@ import { persist } from "zustand/middleware";
 
 interface SettingState {
   proxy: "uv" | "scramjet";
+  setProxy: (proxy: "uv" | "scramjet") => void;
   searchEngine: {
     name: string;
     url: string;

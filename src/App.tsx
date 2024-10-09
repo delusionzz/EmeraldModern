@@ -10,20 +10,36 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
 import Draggable from "react-draggable";
 import { Dock, DockIcon } from "./components/ui/dock";
 import { useEffect, useRef, useState } from "react";
-import useSw from "./components/hooks/useSw";
 import { AnimatePresence, motion } from "framer-motion";
 import { House, Gamepad, Cog, Search, AlignJustify } from "lucide-react";
 import { Xor } from "./components/xor";
 import ReactGA from "react-ga4";
+import useSw from "./components/hooks/useSw";
 function App() {
   const settingStore = useSettings();
   const [term, setTerm] = useState("");
   const [suggestions, setSuggestions] = useState<{ phrase: string }[]>([]);
   const [shouldOpen, setShouldOpen] = useState(false);
   const [openSearch, setOpenSearch] = useState(false);
+  const [openSettings, setOpenSettings] = useState(false);
   const frame = useRef<HTMLIFrameElement>(null);
   const dock = useRef<HTMLDivElement>(null);
   useSw("/sw.js");
@@ -32,8 +48,8 @@ function App() {
   ReactGA.event("page_view", {
     page_location: window.location.href,
     page_title: "Emerald",
-    user_agent: navigator.userAgent ?? "no ua??"
-  })
+    user_agent: navigator.userAgent ?? "no ua??",
+  });
   useEffect(() => {
     setSuggestions([]);
     const delayDebounceFn = setTimeout(async () => {
@@ -80,17 +96,17 @@ function App() {
     if (p && URL.canParse(p)) {
       setShouldOpen(true);
 
-      frame.current!.src = `/~/uv/${Xor.encode(p)}`;
+      frame.current!.src = `/~/${settingStore.proxy}/${Xor.encode(p)}`;
       return;
     }
     if (p) {
       setShouldOpen(true);
-      frame.current!.src = `/~/uv/${Xor.encode(
+      frame.current!.src = `/~/${settingStore.proxy}/${Xor.encode(
         settingStore.searchEngine.url + p
       )}`;
     } else {
       setShouldOpen(true);
-      frame.current!.src = `/~/uv/${Xor.encode(
+      frame.current!.src = `/~/${settingStore.proxy}/${Xor.encode(
         settingStore.searchEngine.url + term
       )}`;
     }
@@ -186,16 +202,13 @@ function App() {
         }`}
       >
         <div className="flex-col space-y-4 flex w-full h-full items-center justify-center">
-          <h2 className="select-none font-display text-center text-2xl text-primary font-semibold  md:text-7xl md:leading-[5rem]">Emerald</h2>
-          {/*<LetterPullup
-            words="Emerald"
-            className="font-display text-center text-2xl text-primary font-semibold  md:text-7xl md:leading-[5rem]"
-            // delay={0.2}
-          />*/}
+          <h2 className="select-none font-display text-center text-2xl text-primary font-semibold  md:text-7xl md:leading-[5rem]">
+            Emerald
+          </h2>
           <div className="w-3/12 relative rounded-2xl focus:border-primary border border-input flex space-x-2 items-center justify-center pr-2">
             <Input
               className="text-white/40 w-[95%] rounded-2xl focus-visible:ring-0 border-none"
-              placeholder={`Using ${settingStore.searchEngine.name} as search engine`}
+              placeholder={`Using ${settingStore.searchEngine.name} as search engine and ${settingStore.proxy} as proxy`}
               value={term}
               onChange={(e) => setTerm(e.target.value)}
               onKeyDown={(e) => {
@@ -283,9 +296,10 @@ function App() {
           <div className="relative w-full h-full flex flex-col items-center justify-center space-y-3">
             <h2 className="sm:text-xs md:text-sm lg:text-2xl">Popular sites</h2>
             <div className="w-full h-full flex flex-col space-y-2">
-              {PopularSites.map((site) => (
+              {PopularSites.map((site, index) => (
                 <div
                   onClick={() => handleSearch(site.url)}
+                  key={index}
                   className="w-full p-2 transition-colors hover:bg-muted/15 cursor-pointer focus:bg-accent focus:text-accent-foreground border-card border rounded-2xl flex gap-4 items-center  mx-auto"
                 >
                   <img src={site.icon} className="w-8 h-8 " alt={site.name} />
@@ -324,7 +338,10 @@ function App() {
                 <Gamepad className=" w-6 h-6 hover:w-7 hover:h-7 transition-all transofrm hover:-translate-y-2" />
               </DockIcon>
               <DockIcon>
-                <Cog className="  w-6 h-6 hover:w-7 hover:h-7 transition-all transofrm hover:-translate-y-2" />
+                <Cog
+                  onClick={() => setOpenSettings(true)}
+                  className="  w-6 h-6 hover:w-7 hover:h-7 transition-all transofrm hover:-translate-y-2"
+                />
               </DockIcon>
               {shouldOpen && (
                 <DockIcon>
@@ -338,6 +355,48 @@ function App() {
           </div>
         </Draggable>
       </footer>
+
+      <Dialog open={openSettings} onOpenChange={setOpenSettings}>
+        <DialogContent className="max-w-[30rem] border-none overflow-y-auto flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="text-4xl">Settings</DialogTitle>
+            <DialogDescription>
+              Change the look or behavior of Emerald
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col space-y-2">
+            <h2 className="text-2xl">Proxy</h2>
+            <div className="flex justify-between px-4">
+              <h3>Current proxy</h3>
+              <Select
+                onValueChange={(e) =>
+                  settingStore.setProxy(e as "uv" | "scramjet")
+                }
+              >
+                <SelectTrigger className="w-[170px] rounded-2xl">
+                  <SelectValue placeholder={`${settingStore.proxy}`} />
+                </SelectTrigger>
+                <SelectContent className="rounded-2xl">
+                  <SelectItem
+                    className="rounded-2xl"
+                    value="uv"
+                    disabled={settingStore.proxy === "uv"}
+                  >
+                    Ultraviolet
+                  </SelectItem>
+                  <SelectItem
+                    value="scramjet"
+                    className="rounded-xl hover:bg-accent/10 transition-colors cursor-pointer"
+                    disabled={settingStore.proxy === "scramjet"}
+                  >
+                    Scramjet (BETA)
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
