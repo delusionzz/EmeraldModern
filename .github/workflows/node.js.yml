@@ -29,4 +29,4 @@ jobs:
           cache: "pnpm"
       - run: pnpm i
       - run: pnpm run build
-      - run: pm2 restart emm
+      - run: pm2 restart emm > /dev/null 2>&1
