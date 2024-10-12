@@ -30,7 +30,15 @@ import Draggable from "react-draggable";
 import { Dock, DockIcon } from "./components/ui/dock";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { House, Gamepad, Cog, Search, AlignJustify } from "lucide-react";
+import {
+  House,
+  Gamepad,
+  Cog,
+  Search,
+  AlignJustify,
+  ArrowLeft,
+  ArrowRight,
+} from "lucide-react";
 import { Xor } from "./components/xor";
 import ReactGA from "react-ga4";
 import useSw from "./components/hooks/useSw";
@@ -387,6 +395,23 @@ function App() {
               className={`${shouldOpen ? "bg-card rounded-l-none" : ""}`}
               ref={dock}
             >
+              {shouldOpen && (
+                <div className="flex space-x-4">
+                  <ArrowLeft
+                    onClick={() => {
+                      frame.current!.contentWindow?.history.back();
+                    }}
+                    className="transform hover:-translate-y-1 transition-all hover:scale-105 cursor-pointer"
+                  />
+                  <ArrowRight
+                    className="transform hover:-translate-y-1 transition-all hover:scale-105 cursor-pointer"
+                    onClick={() =>
+                      frame.current?.contentWindow?.history.forward()
+                    }
+                  />
+                </div>
+              )}
+
               <DockIcon>
                 <House
                   className=" w-6 h-6 hover:w-8 hover:h-8 transition-all transofrm hover:-translate-y-2"
