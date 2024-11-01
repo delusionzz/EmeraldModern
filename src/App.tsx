@@ -381,66 +381,67 @@ function App() {
           </div>
         </motion.div>
       </div>
-      <footer className="absolute bottom-5 left-[50%] translate-x-[-50%]">
-        <Draggable disabled={!shouldOpen} handle=".handle">
-          <div className="max-w-[10rem] h-fit flex">
-            {shouldOpen && (
-              <div className="handle cursor-move supports-backdrop-blur:bg-white/30 supports-backdrop-blur:dark:bg-black/10 supports-backdrop-blur:dark:bg-black/10 mx-auto mt-8 flex h-[58px] w-max gap-2 rounded-2xl border p-2 backdrop-blur-md rounded-l-2xl rounded-r-none items-center">
-                <AlignJustify className="w-6 h-6 text-primary" />
-              </div>
-            )}
-            <Dock
-              direction="middle"
-              magnification={50}
-              className={`${shouldOpen ? "bg-card rounded-l-none" : ""}`}
-              ref={dock}
-            >
+      <Draggable disabled={!shouldOpen} handle=".handle"  positionOffset={{
+        x: "-50%",
+        y: "-1%"
+      }}>
+            <div className="max-w-[10rem] h-fit flex absolute bottom-5 left-[50%] translate-x-[-50%]">
               {shouldOpen && (
-                <div className="flex space-x-4">
-                  <ArrowLeft
-                    onClick={() => {
-                      frame.current!.contentWindow?.history.back();
-                    }}
-                    className="transform hover:-translate-y-1 transition-all hover:scale-105 cursor-pointer"
-                  />
-                  <ArrowRight
-                    className="transform hover:-translate-y-1 transition-all hover:scale-105 cursor-pointer"
-                    onClick={() =>
-                      frame.current?.contentWindow?.history.forward()
-                    }
-                  />
+                <div className="handle cursor-move supports-backdrop-blur:bg-white/30 supports-backdrop-blur:dark:bg-black/10 supports-backdrop-blur:dark:bg-black/10 mx-auto mt-8 flex h-[58px] w-max gap-2 rounded-2xl border p-2 backdrop-blur-md rounded-l-2xl rounded-r-none items-center">
+                  <AlignJustify className="w-6 h-6 text-primary" />
                 </div>
               )}
+              <Dock
+                direction="middle"
+                magnification={50}
+                className={`${shouldOpen ? "bg-card rounded-l-none" : ""}`}
+                ref={dock}
+              >
+                {shouldOpen && (
+                  <div className="flex space-x-4">
+                    <ArrowLeft
+                      onClick={() => {
+                        frame.current!.contentWindow?.history.back();
+                      }}
+                      className="transform hover:-translate-y-1 transition-all hover:scale-105 cursor-pointer"
+                    />
+                    <ArrowRight
+                      className="transform hover:-translate-y-1 transition-all hover:scale-105 cursor-pointer"
+                      onClick={() =>
+                        frame.current?.contentWindow?.history.forward()
+                      }
+                    />
+                  </div>
+                )}
 
-              <DockIcon>
-                <House
-                  className=" w-6 h-6 hover:w-8 hover:h-8 transition-all transofrm hover:-translate-y-2"
-                  onClick={() => {
-                    window.location.reload();
-                  }}
-                />
-              </DockIcon>
-              <DockIcon>
-                <Gamepad className=" w-6 h-6 hover:w-7 hover:h-7 transition-all transofrm hover:-translate-y-2" />
-              </DockIcon>
-              <DockIcon>
-                <Cog
-                  onClick={() => setOpenSettings(true)}
-                  className="  w-6 h-6 hover:w-7 hover:h-7 transition-all transofrm hover:-translate-y-2"
-                />
-              </DockIcon>
-              {shouldOpen && (
                 <DockIcon>
-                  <Search
-                    className="w-6 h-6 hover:w-7 hover:h-7 transition-all transofrm hover:-translate-y-2"
-                    onClick={() => setOpenSearch(!openSearch)}
+                  <House
+                    className=" w-6 h-6 hover:w-8 hover:h-8 transition-all transofrm hover:-translate-y-2"
+                    onClick={() => {
+                      window.location.reload();
+                    }}
                   />
                 </DockIcon>
-              )}
-            </Dock>
-          </div>
-        </Draggable>
-      </footer>
+                <DockIcon>
+                  <Gamepad className=" w-6 h-6 hover:w-7 hover:h-7 transition-all transofrm hover:-translate-y-2" />
+                </DockIcon>
+                <DockIcon>
+                  <Cog
+                    onClick={() => setOpenSettings(true)}
+                    className="  w-6 h-6 hover:w-7 hover:h-7 transition-all transofrm hover:-translate-y-2"
+                  />
+                </DockIcon>
+                {shouldOpen && (
+                  <DockIcon>
+                    <Search
+                      className="w-6 h-6 hover:w-7 hover:h-7 transition-all transofrm hover:-translate-y-2"
+                      onClick={() => setOpenSearch(!openSearch)}
+                    />
+                  </DockIcon>
+                )}
+              </Dock>
+            </div>
+      </Draggable>
 
       <Dialog open={openSettings} onOpenChange={setOpenSettings}>
         <DialogContent className="max-w-[30rem] border-none overflow-y-auto flex flex-col">
