@@ -1,35 +1,36 @@
-import GridPattern from "@/components/ui/grid-pattern";
-import { cn } from "./lib/utils";
-import { Input } from "./components/ui/input";
+import { createLazyFileRoute } from '@tanstack/react-router'
+import GridPattern from '@/components/ui/grid-pattern'
+import { cn } from '../lib/utils'
+import { Input } from '../components/ui/input'
 // import LetterPullup from "./components/ui/letter-pullup";
-import { useSettings } from "./store";
-import PopularSites from "./sites.json";
+import { useSettings } from '../store'
+import PopularSites from '../sites.json'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from '@/components/ui/dropdown-menu'
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
+} from '@/components/ui/dialog'
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select'
 
-import { Separator } from "./components/ui/separator";
-import Draggable from "react-draggable";
-import { Dock, DockIcon } from "./components/ui/dock";
-import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { Separator } from '../components/ui/separator'
+import Draggable from 'react-draggable'
+import { Dock, DockIcon } from '../components/ui/dock'
+import { useEffect, useRef, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import {
   House,
   Gamepad,
@@ -38,60 +39,64 @@ import {
   AlignJustify,
   ArrowLeft,
   ArrowRight,
-} from "lucide-react";
-import { Xor } from "./components/xor";
-import ReactGA from "react-ga4";
-import useSw from "./components/hooks/useSw";
+} from 'lucide-react'
+import { Xor } from '../components/xor'
+import ReactGA from 'react-ga4'
+import useSw from '../components/hooks/useSw'
+
+export const Route = createLazyFileRoute('/')({
+  component: Home,
+})
 
 type Sponser = {
-  title: string;
-  icon: string;
-  url: string;
-  discord: string;
-};
+  title: string
+  icon: string
+  url: string
+  discord: string
+}
 
-function App() {
-  const settingStore = useSettings();
-  const [term, setTerm] = useState("");
-  const [suggestions, setSuggestions] = useState<{ phrase: string }[]>([]);
-  const [shouldOpen, setShouldOpen] = useState(false);
-  const [openSearch, setOpenSearch] = useState(false);
-  const [openSettings, setOpenSettings] = useState(false);
-  const [sponser, setSponser] = useState<Sponser>();
-  const frame = useRef<HTMLIFrameElement>(null);
-  const dock = useRef<HTMLDivElement>(null);
-  useSw("/sw.js");
+function Home() {
+  const settingStore = useSettings()
+  const [term, setTerm] = useState('')
+  const [suggestions, setSuggestions] = useState<{ phrase: string }[]>([])
+  const [shouldOpen, setShouldOpen] = useState(false)
+  const [openSearch, setOpenSearch] = useState(false)
+  const [openSettings, setOpenSettings] = useState(false)
+  const [sponser, setSponser] = useState<Sponser>()
+  const frame = useRef<HTMLIFrameElement>(null)
+  const dock = useRef<HTMLDivElement>(null)
+  useSw('/sw.js')
 
-  ReactGA.initialize("G-PBTEBTLRLZ");
-  ReactGA.event("page_view", {
+  ReactGA.initialize('G-PBTEBTLRLZ')
+  ReactGA.event('page_view', {
     page_location: window.location.href,
-    page_title: "Emerald",
-    user_agent: navigator.userAgent ?? "no ua??",
-  });
+    page_title: 'Emerald',
+    user_agent: navigator.userAgent ?? 'no ua??',
+  })
   useEffect(() => {
-    setSuggestions([]);
+    setSuggestions([])
     const delayDebounceFn = setTimeout(async () => {
       if (term.length > 0) {
-        const res = await fetch("/api/search?query=" + term);
-        const terms = await res.json();
-        setSuggestions(terms);
+        const res = await fetch('/api/search?query=' + term)
+        const terms = await res.json()
+        setSuggestions(terms)
       } else {
-        setSuggestions([]);
+        setSuggestions([])
       }
-    }, 500);
+    }, 500)
 
     return () => {
-      clearTimeout(delayDebounceFn);
-    };
-  }, [term]);
+      clearTimeout(delayDebounceFn)
+    }
+  }, [term])
 
   useEffect(() => {
-    (async () => {
-      const res = await fetch("/api/sponser");
-      const sponser = await res.json();
-      setSponser(sponser as unknown as Sponser);
-    })();
-  }, []);
+    ;(async () => {
+      const res = await fetch('/api/sponser')
+      const sponser = await res.json()
+      setSponser(sponser as unknown as Sponser)
+    })()
+  }, [])
 
   const containerVariants = {
     hidden: {
@@ -101,7 +106,7 @@ function App() {
       opacity: 1,
       transition: {},
     },
-  };
+  }
 
   const itemVariants = {
     hidden: {
@@ -116,34 +121,34 @@ function App() {
       opacity: 0,
       y: 100,
     },
-  };
+  }
   const canParse = (p: string) => {
     try {
-      new URL(p);
-      return true;
+      new URL(p)
+      return true
     } catch (e) {
-      return false;
+      return false
     }
-  };
+  }
   const handleSearch = (p?: string) => {
     if (p && canParse(p)) {
-      setShouldOpen(true);
+      setShouldOpen(true)
 
-      frame.current!.src = `/~/${settingStore.proxy}/${Xor.encode(p)}`;
-      return;
+      frame.current!.src = `/~/${settingStore.proxy}/${Xor.encode(p)}`
+      return
     }
     if (p) {
-      setShouldOpen(true);
+      setShouldOpen(true)
       frame.current!.src = `/~/${settingStore.proxy}/${Xor.encode(
-        settingStore.searchEngine.url + p
-      )}`;
+        settingStore.searchEngine.url + p,
+      )}`
     } else {
-      setShouldOpen(true);
+      setShouldOpen(true)
       frame.current!.src = `/~/${settingStore.proxy}/${Xor.encode(
-        settingStore.searchEngine.url + term
-      )}`;
+        settingStore.searchEngine.url + term,
+      )}`
     }
-  };
+  }
 
   return (
     <>
@@ -169,9 +174,9 @@ function App() {
                 value={term}
                 onChange={(e) => setTerm(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    handleSearch();
-                    setOpenSearch(false);
+                  if (e.key === 'Enter') {
+                    handleSearch()
+                    setOpenSearch(false)
                   }
                 }}
               />
@@ -194,10 +199,10 @@ function App() {
                             delay: 0.05 * index,
                           }}
                           onClick={() => {
-                            setSuggestions([]);
+                            setSuggestions([])
 
-                            handleSearch(suggestion.phrase);
-                            setOpenSearch(false);
+                            handleSearch(suggestion.phrase)
+                            setOpenSearch(false)
                           }}
                         >
                           {suggestion.phrase}
@@ -217,21 +222,21 @@ function App() {
         height={30}
         x={-1}
         y={-1}
-        strokeDasharray={"1 2"}
+        strokeDasharray={'1 2'}
         className={cn(
           `[mask-image:radial-gradient(500px_circle_at_center,white,transparent)] z-[0] ${
-            shouldOpen ? "hidden" : ""
-          }`
+            shouldOpen ? 'hidden' : ''
+          }`,
         )}
       />
       <iframe
         src=""
         ref={frame}
-        className={`w-full h-screen  ${shouldOpen ? "" : "hidden"} z-20`}
+        className={`w-full h-screen  ${shouldOpen ? '' : 'hidden'} z-20`}
       ></iframe>
       <div
         className={`w-full min-h-screen flex items-center justify-center z-20 ${
-          shouldOpen ? "hidden" : ""
+          shouldOpen ? 'hidden' : ''
         }`}
       >
         <div className="flex-col space-y-4 flex w-full h-full items-center justify-center">
@@ -245,8 +250,8 @@ function App() {
               value={term}
               onChange={(e) => setTerm(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleSearch();
+                if (e.key === 'Enter') {
+                  handleSearch()
                 }
               }}
             />
@@ -262,11 +267,11 @@ function App() {
               <DropdownMenuContent className="rounded-2xl p-2 flex items-center justify-center flex-col w-fit">
                 <DropdownMenuItem
                   className={`rounded-2xl w-fit flex space-x-2 cursor-pointer disabled:opacity-50 `}
-                  disabled={settingStore.searchEngine.name === "DuckDuckgo"}
+                  disabled={settingStore.searchEngine.name === 'DuckDuckgo'}
                   onClick={() =>
                     settingStore.setSearchEngine(
-                      "DuckDuckgo",
-                      "https://duckduckgo.com/?q="
+                      'DuckDuckgo',
+                      'https://duckduckgo.com/?q=',
                     )
                   }
                 >
@@ -279,11 +284,11 @@ function App() {
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   className={`rounded-2xl w-fit flex space-x-2 cursor-pointer disabled:opacity-50 min-w-full`}
-                  disabled={settingStore.searchEngine.name === "Google"}
+                  disabled={settingStore.searchEngine.name === 'Google'}
                   onClick={() =>
                     settingStore.setSearchEngine(
-                      "Google",
-                      "https://www.google.com/search?q="
+                      'Google',
+                      'https://www.google.com/search?q=',
                     )
                   }
                 >
@@ -312,9 +317,9 @@ function App() {
                         delay: 0.05 * index,
                       }}
                       onClick={() => {
-                        setSuggestions([]);
+                        setSuggestions([])
 
-                        handleSearch(suggestion.phrase);
+                        handleSearch(suggestion.phrase)
                       }}
                     >
                       {suggestion.phrase}
@@ -367,10 +372,10 @@ function App() {
                         {sponser.title}
                       </h3>
                       <p className="text-center sm:text-xs md:text-xs lg:xs">
-                        Click{" "}
+                        Click{' '}
                         <a href={sponser.discord} className="underline">
                           here
-                        </a>{" "}
+                        </a>{' '}
                         to join their discord!
                       </p>
                     </div>
@@ -381,66 +386,70 @@ function App() {
           </div>
         </motion.div>
       </div>
-      <Draggable disabled={!shouldOpen} handle=".handle"  positionOffset={{
-        x: "-50%",
-        y: "-1%"
-      }}>
-            <div className="max-w-[10rem] h-fit flex absolute bottom-5 left-[50%] translate-x-[-50%]">
-              {shouldOpen && (
-                <div className="handle cursor-move supports-backdrop-blur:bg-white/30 supports-backdrop-blur:dark:bg-black/10 supports-backdrop-blur:dark:bg-black/10 mx-auto mt-8 flex h-[58px] w-max gap-2 rounded-2xl border p-2 backdrop-blur-md rounded-l-2xl rounded-r-none items-center">
-                  <AlignJustify className="w-6 h-6 text-primary" />
-                </div>
-              )}
-              <Dock
-                direction="middle"
-                magnification={50}
-                className={`${shouldOpen ? "bg-card rounded-l-none" : ""}`}
-                ref={dock}
-              >
-                {shouldOpen && (
-                  <div className="flex space-x-4">
-                    <ArrowLeft
-                      onClick={() => {
-                        frame.current!.contentWindow?.history.back();
-                      }}
-                      className="transform hover:-translate-y-1 transition-all hover:scale-105 cursor-pointer"
-                    />
-                    <ArrowRight
-                      className="transform hover:-translate-y-1 transition-all hover:scale-105 cursor-pointer"
-                      onClick={() =>
-                        frame.current?.contentWindow?.history.forward()
-                      }
-                    />
-                  </div>
-                )}
-
-                <DockIcon>
-                  <House
-                    className=" w-6 h-6 hover:w-8 hover:h-8 transition-all transofrm hover:-translate-y-2"
-                    onClick={() => {
-                      window.location.reload();
-                    }}
-                  />
-                </DockIcon>
-                <DockIcon>
-                  <Gamepad className=" w-6 h-6 hover:w-7 hover:h-7 transition-all transofrm hover:-translate-y-2" />
-                </DockIcon>
-                <DockIcon>
-                  <Cog
-                    onClick={() => setOpenSettings(true)}
-                    className="  w-6 h-6 hover:w-7 hover:h-7 transition-all transofrm hover:-translate-y-2"
-                  />
-                </DockIcon>
-                {shouldOpen && (
-                  <DockIcon>
-                    <Search
-                      className="w-6 h-6 hover:w-7 hover:h-7 transition-all transofrm hover:-translate-y-2"
-                      onClick={() => setOpenSearch(!openSearch)}
-                    />
-                  </DockIcon>
-                )}
-              </Dock>
+      <Draggable
+        disabled={!shouldOpen}
+        handle=".handle"
+        positionOffset={{
+          x: '-50%',
+          y: '-1%',
+        }}
+      >
+        <div className="max-w-[10rem] h-fit flex absolute bottom-5 left-[50%] translate-x-[-50%]">
+          {shouldOpen && (
+            <div className="handle cursor-move supports-backdrop-blur:bg-white/30 supports-backdrop-blur:dark:bg-black/10 supports-backdrop-blur:dark:bg-black/10 mx-auto mt-8 flex h-[58px] w-max gap-2 rounded-2xl border p-2 backdrop-blur-md rounded-l-2xl rounded-r-none items-center">
+              <AlignJustify className="w-6 h-6 text-primary" />
             </div>
+          )}
+          <Dock
+            direction="middle"
+            magnification={50}
+            className={`${shouldOpen ? 'bg-card rounded-l-none' : ''}`}
+            ref={dock}
+          >
+            {shouldOpen && (
+              <div className="flex space-x-4">
+                <ArrowLeft
+                  onClick={() => {
+                    frame.current!.contentWindow?.history.back()
+                  }}
+                  className="transform hover:-translate-y-1 transition-all hover:scale-105 cursor-pointer"
+                />
+                <ArrowRight
+                  className="transform hover:-translate-y-1 transition-all hover:scale-105 cursor-pointer"
+                  onClick={() =>
+                    frame.current?.contentWindow?.history.forward()
+                  }
+                />
+              </div>
+            )}
+
+            <DockIcon>
+              <House
+                className=" w-6 h-6 hover:w-8 hover:h-8 transition-all transofrm hover:-translate-y-2"
+                onClick={() => {
+                  window.location.reload()
+                }}
+              />
+            </DockIcon>
+            <DockIcon>
+              <Gamepad className=" w-6 h-6 hover:w-7 hover:h-7 transition-all transofrm hover:-translate-y-2" />
+            </DockIcon>
+            <DockIcon>
+              <Cog
+                onClick={() => setOpenSettings(true)}
+                className="  w-6 h-6 hover:w-7 hover:h-7 transition-all transofrm hover:-translate-y-2"
+              />
+            </DockIcon>
+            {shouldOpen && (
+              <DockIcon>
+                <Search
+                  className="w-6 h-6 hover:w-7 hover:h-7 transition-all transofrm hover:-translate-y-2"
+                  onClick={() => setOpenSearch(!openSearch)}
+                />
+              </DockIcon>
+            )}
+          </Dock>
+        </div>
       </Draggable>
 
       <Dialog open={openSettings} onOpenChange={setOpenSettings}>
@@ -457,7 +466,7 @@ function App() {
               <h3>Current proxy</h3>
               <Select
                 onValueChange={(e) =>
-                  settingStore.setProxy(e as "uv" | "scramjet")
+                  settingStore.setProxy(e as 'uv' | 'scramjet')
                 }
               >
                 <SelectTrigger className="w-[170px] rounded-2xl">
@@ -467,14 +476,14 @@ function App() {
                   <SelectItem
                     className="rounded-2xl"
                     value="uv"
-                    disabled={settingStore.proxy === "uv"}
+                    disabled={settingStore.proxy === 'uv'}
                   >
                     Ultraviolet
                   </SelectItem>
                   <SelectItem
                     value="scramjet"
                     className="rounded-xl hover:bg-accent/10 transition-colors cursor-pointer"
-                    disabled={settingStore.proxy === "scramjet"}
+                    disabled={settingStore.proxy === 'scramjet'}
                   >
                     Scramjet (BETA)
                   </SelectItem>
@@ -485,7 +494,5 @@ function App() {
         </DialogContent>
       </Dialog>
     </>
-  );
+  )
 }
-
-export default App;
