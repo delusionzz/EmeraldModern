@@ -131,23 +131,22 @@ function Home() {
       return false;
     }
   };
-  const handleSearch = (p?: string) => {
+
+  const handleSearch = (p?: string, isPhrase = false) => {
     if (p && canParse(p)) {
       setShouldOpen(true);
-
-      frame.current!.src = `/~/${settingStore.proxy}/${Xor.encode(p)}`;
+      const encoding = encodeURIComponent(p);
+      frame.current!.src = `/~/${settingStore.proxy}/${encoding}`;
       return;
     }
-    if (p) {
+    if (p && isPhrase) {
       setShouldOpen(true);
-      frame.current!.src = `/~/${settingStore.proxy}/${Xor.encode(
-        settingStore.searchEngine.url + p
-      )}`;
+      const encoding = encodeURIComponent(settingStore.searchEngine.url + p);
+      frame.current!.src = `/~/${settingStore.proxy}/${encoding}`;
     } else {
       setShouldOpen(true);
-      frame.current!.src = `/~/${settingStore.proxy}/${Xor.encode(
-        settingStore.searchEngine.url + term
-      )}`;
+      const encoding = encodeURIComponent(settingStore.searchEngine.url + term);
+      frame.current!.src = `/~/${settingStore.proxy}/${encoding}`;
     }
   };
 
@@ -202,7 +201,7 @@ function Home() {
                           onClick={() => {
                             setSuggestions([]);
 
-                            handleSearch(suggestion.phrase);
+                            handleSearch(suggestion.phrase, true);
                             setOpenSearch(false);
                           }}
                         >
@@ -502,6 +501,34 @@ function Home() {
                     disabled={settingStore.proxy === "scramjet"}
                   >
                     Scramjet (BETA)
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex justify-between px-4">
+              <h3>Cloak</h3>
+              <Select
+                onValueChange={(e) =>
+                  settingStore.setCloak(e as "none" | "aboutBlank")
+                }
+              >
+                <SelectTrigger className="w-[170px] rounded-2xl">
+                  <SelectValue placeholder={`${settingStore.cloak}`} />
+                </SelectTrigger>
+                <SelectContent className="rounded-2xl">
+                  <SelectItem
+                    className="rounded-2xl"
+                    value="none"
+                    disabled={settingStore.cloak === "none"}
+                  >
+                    None
+                  </SelectItem>
+                  <SelectItem
+                    value="aboutBlank"
+                    className="rounded-xl hover:bg-accent/10 transition-colors cursor-pointer"
+                    disabled={settingStore.cloak === "aboutBlank"}
+                  >
+                    About Blank
                   </SelectItem>
                 </SelectContent>
               </Select>

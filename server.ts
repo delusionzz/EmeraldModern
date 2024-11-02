@@ -16,7 +16,7 @@ type Sponser = {
   url: string;
   discord: string;
 };
-
+const analyticMap = new Map<string, { host: string; count: number }>();
 let sponserFile: Sponser[] = [];
 if (fs.existsSync(path.join(__dirname, "sponsers.json"))) {
   sponserFile = JSON.parse(
@@ -78,6 +78,31 @@ app.get("/api/sponser", async (req, res) => {
   } else {
     res.send([]);
   }
+});
+
+app.post("/api/analytics", async (req, res) => {
+  const { analytics } = req.body as {
+    analytics: { host: string; path: string };
+  };
+  if (!analytics) {
+    return res.send({
+      success: false,
+      error: "Missing analytics",
+    });
+  }
+  analyticMap.set(analytics.host, {
+    host: analytics.host,
+    count: (analyticMap.get(analytics.host)?.count || 0) + 1,
+  });
+  res.send({
+    success: true,
+  });
+});
+
+app.get("/api/analytics", async (req, res) => {
+  res.send(
+    Array.from(analyticMap.entries()).sort((a, b) => b[1].count - a[1].count)
+  );
 });
 
 app.post("/api/chat", async (req, res) => {
@@ -144,52 +169,3 @@ app.listen({ port: parseInt(process.env.PORT || "3000") }, (err, address) => {
   }
   console.log(`server listening on ${address}`);
 });
-
-// async function* readStream(body: ReadableStream<Uint8Array>) {
-//   const reader = body.getReader();
-//   const decoder = new TextDecoder("utf-8");
-
-//   let partial = "";
-
-//   let done = false;
-//   while (!done) {
-//     const { value, done: streamDone } = await reader.read();
-//     done = streamDone;
-//     if (value) {
-//       let decodedData = decoder.decode(value, { stream: false });
-
-//       // Remove "data: " from each line in the decoded data
-//       decodedData = decodedData
-//         .split("\n")
-//         .map((line) => (line.startsWith("data: ") ? line.substring(6) : line))
-//         .join("\n")
-//         .trim();
-
-//       if (decodedData !== "[DONE]") {
-//         const arr = decodedData.split("\n");
-//         for (let i = 0; i < arr.length; i++) {
-//           const el = arr[i].replaceAll("\n", "");
-//           if (el === "\n") continue;
-//           if (el === "[DONE]") {
-//             done = true;
-//             continue;
-//           }
-//           if (el.charAt(el.length - 1) === "}") {
-//             try {
-//               partial += el;
-//               yield `${partial}`;
-//               partial = "";
-//             } catch (error) {
-//               console.log("Got error while parsing JSON", error);
-//               console.log("Partial: ", partial);
-//             }
-//           } else {
-//             partial += el;
-//           }
-//         }
-//       }
-//     }
-//   }
-
-//   console.log("Stream complete.");
-// }

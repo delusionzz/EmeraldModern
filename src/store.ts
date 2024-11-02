@@ -8,6 +8,8 @@ interface SettingState {
     name: string;
     url: string;
   };
+  cloak: "none" | "aboutBlank";
+  setCloak: (cloak: "none" | "aboutBlank") => void;
   transport: {
     path: string;
     name: string;
@@ -23,6 +25,9 @@ const useSettings = create<SettingState>()(
         path: "/libcurl/index.mjs",
         name: "libcurl",
       },
+      cloak: "none",
+
+      setCloak: (cloak: "none" | "aboutBlank") => set(() => ({ cloak })),
       searchEngine: {
         name: "Google",
         url: "https://www.google.com/search?q=",
