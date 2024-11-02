@@ -446,6 +446,16 @@ function Home() {
                 className="  w-6 h-6 hover:w-7 hover:h-7 transition-all transofrm hover:-translate-y-2"
               />
             </DockIcon>
+            <DockIcon>
+              <img
+                src="/discordDock.svg"
+                className="w-6 h-6 hover:w-7 hover:h-7 transition-all transofrm hover:-translate-y-2"
+                onClick={() =>
+                  window.open("https://discord.gg/Dpj8C8SAmH", "_blank")
+                }
+                alt=""
+              />
+            </DockIcon>
             {shouldOpen && (
               <DockIcon>
                 <Search
