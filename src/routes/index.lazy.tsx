@@ -1,36 +1,36 @@
-import { createLazyFileRoute } from '@tanstack/react-router'
-import GridPattern from '@/components/ui/grid-pattern'
-import { cn } from '../lib/utils'
-import { Input } from '../components/ui/input'
+import { createLazyFileRoute, Link } from "@tanstack/react-router";
+import GridPattern from "@/components/ui/grid-pattern";
+import { cn } from "../lib/utils";
+import { Input } from "../components/ui/input";
 // import LetterPullup from "./components/ui/letter-pullup";
-import { useSettings } from '../store'
-import PopularSites from '../sites.json'
+import { useSettings } from "../store";
+import PopularSites from "../sites.json";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
+} from "@/components/ui/dropdown-menu";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
+} from "@/components/ui/dialog";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select'
+} from "@/components/ui/select";
 
-import { Separator } from '../components/ui/separator'
-import Draggable from 'react-draggable'
-import { Dock, DockIcon } from '../components/ui/dock'
-import { useEffect, useRef, useState } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { Separator } from "../components/ui/separator";
+import Draggable from "react-draggable";
+import { Dock, DockIcon } from "../components/ui/dock";
+import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   House,
   Gamepad,
@@ -39,64 +39,65 @@ import {
   AlignJustify,
   ArrowLeft,
   ArrowRight,
-} from 'lucide-react'
-import { Xor } from '../components/xor'
-import ReactGA from 'react-ga4'
-import useSw from '../components/hooks/useSw'
+  MessageCircle,
+} from "lucide-react";
+import { Xor } from "../components/xor";
+import ReactGA from "react-ga4";
+import useSw from "../components/hooks/useSw";
 
-export const Route = createLazyFileRoute('/')({
+export const Route = createLazyFileRoute("/")({
   component: Home,
-})
+});
 
 type Sponser = {
-  title: string
-  icon: string
-  url: string
-  discord: string
-}
+  title: string;
+  icon: string;
+  url: string;
+  discord: string;
+};
 
 function Home() {
-  const settingStore = useSettings()
-  const [term, setTerm] = useState('')
-  const [suggestions, setSuggestions] = useState<{ phrase: string }[]>([])
-  const [shouldOpen, setShouldOpen] = useState(false)
-  const [openSearch, setOpenSearch] = useState(false)
-  const [openSettings, setOpenSettings] = useState(false)
-  const [sponser, setSponser] = useState<Sponser>()
-  const frame = useRef<HTMLIFrameElement>(null)
-  const dock = useRef<HTMLDivElement>(null)
-  useSw('/sw.js')
+  const settingStore = useSettings();
+  const [term, setTerm] = useState("");
+  const [suggestions, setSuggestions] = useState<{ phrase: string }[]>([]);
+  const [shouldOpen, setShouldOpen] = useState(false);
+  const [openSearch, setOpenSearch] = useState(false);
+  const [openSettings, setOpenSettings] = useState(false);
+  const [sponser, setSponser] = useState<Sponser>();
+  const frame = useRef<HTMLIFrameElement>(null);
+  const dock = useRef<HTMLDivElement>(null);
+  useSw("/sw.js");
 
-  ReactGA.initialize('G-PBTEBTLRLZ')
-  ReactGA.event('page_view', {
+  ReactGA.initialize("G-PBTEBTLRLZ");
+  ReactGA.event("page_view", {
     page_location: window.location.href,
-    page_title: 'Emerald',
-    user_agent: navigator.userAgent ?? 'no ua??',
-  })
+    page_title: "Emerald",
+    user_agent: navigator.userAgent ?? "no ua??",
+  });
   useEffect(() => {
-    setSuggestions([])
+    setSuggestions([]);
     const delayDebounceFn = setTimeout(async () => {
       if (term.length > 0) {
-        const res = await fetch('/api/search?query=' + term)
-        const terms = await res.json()
-        setSuggestions(terms)
+        const res = await fetch("/api/search?query=" + term);
+        const terms = await res.json();
+        setSuggestions(terms);
       } else {
-        setSuggestions([])
+        setSuggestions([]);
       }
-    }, 500)
+    }, 500);
 
     return () => {
-      clearTimeout(delayDebounceFn)
-    }
-  }, [term])
+      clearTimeout(delayDebounceFn);
+    };
+  }, [term]);
 
   useEffect(() => {
-    ;(async () => {
-      const res = await fetch('/api/sponser')
-      const sponser = await res.json()
-      setSponser(sponser as unknown as Sponser)
-    })()
-  }, [])
+    (async () => {
+      const res = await fetch("/api/sponser");
+      const sponser = await res.json();
+      setSponser(sponser as unknown as Sponser);
+    })();
+  }, []);
 
   const containerVariants = {
     hidden: {
@@ -106,7 +107,7 @@ function Home() {
       opacity: 1,
       transition: {},
     },
-  }
+  };
 
   const itemVariants = {
     hidden: {
@@ -121,34 +122,34 @@ function Home() {
       opacity: 0,
       y: 100,
     },
-  }
+  };
   const canParse = (p: string) => {
     try {
-      new URL(p)
-      return true
+      new URL(p);
+      return true;
     } catch (e) {
-      return false
+      return false;
     }
-  }
+  };
   const handleSearch = (p?: string) => {
     if (p && canParse(p)) {
-      setShouldOpen(true)
+      setShouldOpen(true);
 
-      frame.current!.src = `/~/${settingStore.proxy}/${Xor.encode(p)}`
-      return
+      frame.current!.src = `/~/${settingStore.proxy}/${Xor.encode(p)}`;
+      return;
     }
     if (p) {
-      setShouldOpen(true)
+      setShouldOpen(true);
       frame.current!.src = `/~/${settingStore.proxy}/${Xor.encode(
-        settingStore.searchEngine.url + p,
-      )}`
+        settingStore.searchEngine.url + p
+      )}`;
     } else {
-      setShouldOpen(true)
+      setShouldOpen(true);
       frame.current!.src = `/~/${settingStore.proxy}/${Xor.encode(
-        settingStore.searchEngine.url + term,
-      )}`
+        settingStore.searchEngine.url + term
+      )}`;
     }
-  }
+  };
 
   return (
     <>
@@ -174,9 +175,9 @@ function Home() {
                 value={term}
                 onChange={(e) => setTerm(e.target.value)}
                 onKeyDown={(e) => {
-                  if (e.key === 'Enter') {
-                    handleSearch()
-                    setOpenSearch(false)
+                  if (e.key === "Enter") {
+                    handleSearch();
+                    setOpenSearch(false);
                   }
                 }}
               />
@@ -199,10 +200,10 @@ function Home() {
                             delay: 0.05 * index,
                           }}
                           onClick={() => {
-                            setSuggestions([])
+                            setSuggestions([]);
 
-                            handleSearch(suggestion.phrase)
-                            setOpenSearch(false)
+                            handleSearch(suggestion.phrase);
+                            setOpenSearch(false);
                           }}
                         >
                           {suggestion.phrase}
@@ -222,21 +223,21 @@ function Home() {
         height={30}
         x={-1}
         y={-1}
-        strokeDasharray={'1 2'}
+        strokeDasharray={"1 2"}
         className={cn(
           `[mask-image:radial-gradient(500px_circle_at_center,white,transparent)] z-[0] ${
-            shouldOpen ? 'hidden' : ''
-          }`,
+            shouldOpen ? "hidden" : ""
+          }`
         )}
       />
       <iframe
         src=""
         ref={frame}
-        className={`w-full h-screen  ${shouldOpen ? '' : 'hidden'} z-20`}
+        className={`w-full h-screen  ${shouldOpen ? "" : "hidden"} z-20`}
       ></iframe>
       <div
         className={`w-full min-h-screen flex items-center justify-center z-20 ${
-          shouldOpen ? 'hidden' : ''
+          shouldOpen ? "hidden" : ""
         }`}
       >
         <div className="flex-col space-y-4 flex w-full h-full items-center justify-center">
@@ -250,8 +251,8 @@ function Home() {
               value={term}
               onChange={(e) => setTerm(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  handleSearch()
+                if (e.key === "Enter") {
+                  handleSearch();
                 }
               }}
             />
@@ -267,11 +268,11 @@ function Home() {
               <DropdownMenuContent className="rounded-2xl p-2 flex items-center justify-center flex-col w-fit">
                 <DropdownMenuItem
                   className={`rounded-2xl w-fit flex space-x-2 cursor-pointer disabled:opacity-50 `}
-                  disabled={settingStore.searchEngine.name === 'DuckDuckgo'}
+                  disabled={settingStore.searchEngine.name === "DuckDuckgo"}
                   onClick={() =>
                     settingStore.setSearchEngine(
-                      'DuckDuckgo',
-                      'https://duckduckgo.com/?q=',
+                      "DuckDuckgo",
+                      "https://duckduckgo.com/?q="
                     )
                   }
                 >
@@ -284,11 +285,11 @@ function Home() {
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   className={`rounded-2xl w-fit flex space-x-2 cursor-pointer disabled:opacity-50 min-w-full`}
-                  disabled={settingStore.searchEngine.name === 'Google'}
+                  disabled={settingStore.searchEngine.name === "Google"}
                   onClick={() =>
                     settingStore.setSearchEngine(
-                      'Google',
-                      'https://www.google.com/search?q=',
+                      "Google",
+                      "https://www.google.com/search?q="
                     )
                   }
                 >
@@ -317,9 +318,9 @@ function Home() {
                         delay: 0.05 * index,
                       }}
                       onClick={() => {
-                        setSuggestions([])
+                        setSuggestions([]);
 
-                        handleSearch(suggestion.phrase)
+                        handleSearch(suggestion.phrase);
                       }}
                     >
                       {suggestion.phrase}
@@ -372,10 +373,10 @@ function Home() {
                         {sponser.title}
                       </h3>
                       <p className="text-center sm:text-xs md:text-xs lg:xs">
-                        Click{' '}
+                        Click{" "}
                         <a href={sponser.discord} className="underline">
                           here
-                        </a>{' '}
+                        </a>{" "}
                         to join their discord!
                       </p>
                     </div>
@@ -390,8 +391,8 @@ function Home() {
         disabled={!shouldOpen}
         handle=".handle"
         positionOffset={{
-          x: '-50%',
-          y: '-1%',
+          x: "-50%",
+          y: "-1%",
         }}
       >
         <div className="max-w-[10rem] h-fit flex absolute bottom-5 left-[50%] translate-x-[-50%]">
@@ -403,14 +404,14 @@ function Home() {
           <Dock
             direction="middle"
             magnification={50}
-            className={`${shouldOpen ? 'bg-card rounded-l-none' : ''}`}
+            className={`${shouldOpen ? "bg-card rounded-l-none" : ""}`}
             ref={dock}
           >
             {shouldOpen && (
               <div className="flex space-x-4">
                 <ArrowLeft
                   onClick={() => {
-                    frame.current!.contentWindow?.history.back()
+                    frame.current!.contentWindow?.history.back();
                   }}
                   className="transform hover:-translate-y-1 transition-all hover:scale-105 cursor-pointer"
                 />
@@ -427,12 +428,17 @@ function Home() {
               <House
                 className=" w-6 h-6 hover:w-8 hover:h-8 transition-all transofrm hover:-translate-y-2"
                 onClick={() => {
-                  window.location.reload()
+                  window.location.reload();
                 }}
               />
             </DockIcon>
             <DockIcon>
-              <Gamepad className=" w-6 h-6 hover:w-7 hover:h-7 transition-all transofrm hover:-translate-y-2" />
+              <Gamepad className="w-6 h-6 hover:w-7 hover:h-7 transition-all transofrm hover:-translate-y-2" />
+            </DockIcon>
+            <DockIcon>
+              <Link to="/chat">
+                <MessageCircle className="w-6 h-6 hover:w-7 hover:h-7 transition-all transofrm hover:-translate-y-2" />
+              </Link>
             </DockIcon>
             <DockIcon>
               <Cog
@@ -466,7 +472,7 @@ function Home() {
               <h3>Current proxy</h3>
               <Select
                 onValueChange={(e) =>
-                  settingStore.setProxy(e as 'uv' | 'scramjet')
+                  settingStore.setProxy(e as "uv" | "scramjet")
                 }
               >
                 <SelectTrigger className="w-[170px] rounded-2xl">
@@ -476,14 +482,14 @@ function Home() {
                   <SelectItem
                     className="rounded-2xl"
                     value="uv"
-                    disabled={settingStore.proxy === 'uv'}
+                    disabled={settingStore.proxy === "uv"}
                   >
                     Ultraviolet
                   </SelectItem>
                   <SelectItem
                     value="scramjet"
                     className="rounded-xl hover:bg-accent/10 transition-colors cursor-pointer"
-                    disabled={settingStore.proxy === 'scramjet'}
+                    disabled={settingStore.proxy === "scramjet"}
                   >
                     Scramjet (BETA)
                   </SelectItem>
@@ -494,5 +500,5 @@ function Home() {
         </DialogContent>
       </Dialog>
     </>
-  )
+  );
 }

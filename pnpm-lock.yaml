@@ -35,6 +35,9 @@ importers:
       '@radix-ui/react-separator':
         specifier: ^1.1.0
         version: 1.1.0(@types/react-dom@18.3.0)(@types/react@18.3.11)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@radix-ui/react-slot':
+        specifier: ^1.1.0
+        version: 1.1.0(@types/react@18.3.11)(react@18.3.1)
       '@tanstack/react-router':
         specifier: ^1.78.0
         version: 1.78.0(@tanstack/router-generator@1.78.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -50,6 +53,9 @@ importers:
       dotenv:
         specifier: ^16.4.5
         version: 16.4.5
+      fake-useragent:
+        specifier: ^1.0.1
+        version: 1.0.1
       fastify:
         specifier: ^5.0.0
         version: 5.0.0
@@ -96,6 +102,9 @@ importers:
       '@tanstack/router-plugin':
         specifier: ^1.78.0
         version: 1.78.0(vite@5.4.8(@types/node@22.7.4))
+      '@types/fake-useragent':
+        specifier: ^1.0.0
+        version: 1.0.0
       '@types/node':
         specifier: ^22.7.4
         version: 22.7.4
@@ -1220,6 +1229,9 @@ packages:
   '@types/estree@1.0.6':
     resolution: {integrity: sha512-AYnb1nQyY49te+VRAVgmzfcgjYS91mY5P0TKUDCLEM+gNnA+3T6rWITXRLYCpahpqSQbN5cE+gHpnPyXjHWxcw==}
 
+  '@types/fake-useragent@1.0.0':
+    resolution: {integrity: sha512-T+GsW6umr2E27FwubiKrPsjIyqx526AQH1dc1Sky31EnVW5YJ4aNV/KCWeCr9LBioSMGHi7zjNxAteHPQtzeDw==}
+
   '@types/json-schema@7.0.15':
     resolution: {integrity: sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==}
 
@@ -1627,6 +1639,9 @@ packages:
   events@3.3.0:
     resolution: {integrity: sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==}
     engines: {node: '>=0.8.x'}
+
+  fake-useragent@1.0.1:
+    resolution: {integrity: sha512-BOQh1TM//DhrVaeZ+b3w3s4E40rfYcDTn5aoSM2w1xVsZVGglNOzPR5H8KDO8NmF8sT4ppxyb4/MHGIHfZsVDA==}
 
   fast-decode-uri-component@1.0.1:
     resolution: {integrity: sha512-WKgKWg5eUxvRZGwW8FvfbaH7AXSh2cL+3j5fMGzUMCxWBJ3dV3a7Wz8y2f/uQ0e3B6WmodD3oS54jTQ9HVTIIg==}
@@ -3579,6 +3594,8 @@ snapshots:
 
   '@types/estree@1.0.6': {}
 
+  '@types/fake-useragent@1.0.0': {}
+
   '@types/json-schema@7.0.15': {}
 
   '@types/node@22.7.4':
@@ -4040,6 +4057,8 @@ snapshots:
   event-target-shim@5.0.1: {}
 
   events@3.3.0: {}
+
+  fake-useragent@1.0.1: {}
 
   fast-decode-uri-component@1.0.1: {}
 
