@@ -41,7 +41,6 @@ import {
   ArrowRight,
   MessageCircle,
 } from "lucide-react";
-import { Xor } from "../components/xor";
 import ReactGA from "react-ga4";
 import useSw from "../components/hooks/useSw";
 
