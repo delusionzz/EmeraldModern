@@ -6,6 +6,15 @@ import { Button } from "@/components/ui/button";
 import { Bot, Send, User, Home } from "lucide-react";
 import { useEffect, useState } from "react";
 import { create } from "zustand";
+import { Suspense } from "react";
+// Needed for markdown
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from "remark-gfm" // <-- lets us use links & tables etc
+
+//TODO: lazy import these because their massive
+import { Prism } from "react-syntax-highlighter"
+import { dracula as HighlightStyle } from 'react-syntax-highlighter/dist/esm/styles/prism'
+
 export const Route = createLazyFileRoute("/chat")({
   component: RouteComponent,
 });
@@ -57,6 +66,11 @@ function RouteComponent() {
         }),
         headers,
       });
+
+      if (!response.ok) {
+        alert("Something went wrong... reloading window");
+        window.location.reload()
+      }
 
       if (!response.body) {
         console.log("No response body");
@@ -133,7 +147,7 @@ function RouteComponent() {
         )}
       />
       <div className="w-full min-h-screen flex flex-col items-center justify-center z-20 space-y-4">
-        <div className="h-[80vh] min-w-[60%] max-w-[60%] border rounded-xl border-secondary p-4 overflow-y-auto overflow-x-hidden space-y-3">
+        <div className="h-[80vh] min-w-[70%] max-w-[70%] border rounded-xl border-secondary p-4 overflow-y-auto overflow-x-hidden space-y-3">
           {messageStore.messages.map((message, i) => {
             return <Chat key={i} message={message} />;
           })}
@@ -191,16 +205,44 @@ function RouteComponent() {
 
 function Chat({ message }: { message: ChatPayload["messages"][number] }) {
   return (
-    <div className="flex space-x-4">
+    <div className="flex space-x-4 px-1 overflow-x-auto">
       {message.role === "user" ? (
         <User className="w-8 h-8 flex-shrink-0" size={20} />
       ) : (
         <Bot className="w-8 h-8 flex-shrink-0" size={20} />
       )}
       <div className="flex flex-col space-y-1"></div>
-      <p className="text-sm text-muted-foreground bg-muted p-2 rounded">
+      <Suspense fallback={<>Loading...</>}>
+
+        <ReactMarkdown
+          children={message.content}
+          remarkPlugins={[remarkGfm]}
+          className={"markdownRender"}
+          components={{
+            // @ts-expect-error
+            code({ node, inline, className, children, ...props }) {
+              const match = /language-(\w+)/.exec(className || '')
+              return !inline && match ? (
+                <Prism
+                  children={String(children).replace(/\n$/, '')}
+                  //@ts-ignore
+                  style={HighlightStyle}
+                  language={match[1]}
+                  PreTag="div"
+                  {...props}
+                />
+              ) : (
+                <code className={className} {...props}>
+                  {children}
+                </code>
+              )
+            }
+          }}
+        />
+      </Suspense>
+      {/* <p className="">
         {message.content}
-      </p>
+      </p> */}
     </div>
   );
 }

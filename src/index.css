@@ -69,3 +69,16 @@
     @apply bg-black text-foreground overflow-hidden;
   }
 }
+
+
+.markdownRender {
+  @apply bg-muted p-2 rounded;
+  p {
+    @apply text-sm text-muted-foreground 
+  }
+
+  code {
+    @apply text-wrap
+  }
+
+}

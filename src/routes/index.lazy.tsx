@@ -126,7 +126,7 @@ function Home() {
     try {
       new URL(p);
       return true;
-    } catch (e) {
+    } catch (_) {
       return false;
     }
   };
