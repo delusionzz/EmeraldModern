@@ -4,9 +4,10 @@ import path from "path";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 import { baremuxPath } from "@mercuryworkshop/bare-mux/node";
 import { libcurlPath } from "@mercuryworkshop/libcurl-transport";
-//@ts-expect-error
+//@ts-ignore
 import { epoxyPath } from "@mercuryworkshop/epoxy-transport";
 import { uvPath } from "@titaniumnetwork-dev/ultraviolet";
+import { ViteImageOptimizer } from "vite-plugin-image-optimizer";
 
 import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
 // https://vitejs.dev/config/
@@ -14,6 +15,11 @@ export default defineConfig({
   plugins: [
     react(),
     TanStackRouterVite(),
+    ViteImageOptimizer({
+      logStats: true,
+      cache: true,
+      cacheLocation: path.resolve(__dirname, ".cache"),
+    }),
     viteStaticCopy({
       targets: [
         {
@@ -50,7 +56,7 @@ export default defineConfig({
         target: "http://localhosT:3000/",
       },
       "/w/": {
-        target: "http://localhosT:4000/",
+        target: "http://localhosT:3000/",
         rewrite: (p) => p.replace(/^\/w/, ""),
         ws: true,
       },
