@@ -259,6 +259,7 @@ function Home() {
                 <div className="min-h-8">
                   <img
                     src={`/searchEngines/${settingStore.searchEngine.name}.png`}
+                    alt={`${settingStore.searchEngine.name} search Engine`}
                     className="h-8"
                   />
                 </div>
@@ -363,20 +364,18 @@ function Home() {
                   >
                     <img
                       src={sponser.icon}
-                      alt=""
+                      alt={sponser.title}
                       className="w-16 h-16 rounded-2xl"
                     />
                     <div className="w-full h-full flex flex-col items-center justify-center">
                       <h3 className="font-bold text-center sm:text-sm md:text-base lg:text-lg">
                         {sponser.title}
                       </h3>
-                      <p className="text-center sm:text-xs md:text-xs lg:xs">
-                        Click{" "}
-                        <a href={sponser.discord} className="underline">
-                          here
-                        </a>{" "}
-                        to join their discord!
-                      </p>
+                      <a href={sponser.discord} className="underline">
+                        <p className="text-center sm:text-xs md:text-xs lg:xs">
+                          Click here to join their discord!
+                        </p>
+                      </a>{" "}
                     </div>
                   </motion.div>
                 </>
@@ -451,7 +450,7 @@ function Home() {
                 onClick={() =>
                   window.open("https://discord.gg/Dpj8C8SAmH", "_blank")
                 }
-                alt=""
+                alt={"Discord Logo"}
               />
             </DockIcon>
             {shouldOpen && (
