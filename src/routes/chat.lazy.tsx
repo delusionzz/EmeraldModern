@@ -133,7 +133,18 @@ function RouteComponent() {
       setProcesssing(false);
     })();
   };
+  useEffect(() => {
+    const ad = document.querySelector("#thathting")
+    const script = document.createElement("script")
+    script.innerHTML = `
+    console.log("running ad...")
+          aclib.runBanner({
+            zoneId: '8986014',
+        });
+    `
 
+    ad?.appendChild(script);
+  }, [])
   return (
     <>
       <GridPattern
@@ -147,6 +158,7 @@ function RouteComponent() {
         )}
       />
       <div className="w-full min-h-screen flex flex-col items-center justify-center z-20 space-y-4">
+
         <div className="h-[80vh] min-w-[70%] max-w-[70%] border rounded-xl border-secondary p-4 overflow-y-auto overflow-x-hidden space-y-3">
           {messageStore.messages.map((message, i) => {
             return <Chat key={i} message={message} />;
@@ -199,6 +211,11 @@ function RouteComponent() {
           </div>
         </div>
       </div>
+
+      <div id="thathting" className="absolute m-auto bg-red-500 top-0 bottom-0 right-5 aspect-auto">
+          
+       </div>
+
     </>
   );
 }
