@@ -9,6 +9,8 @@
       name="description"
       content="The Emerald service, your one stop solution for all you're nefarious needs"
     />
+    <meta name="og:image" content="/emerald.png" />
+
     <link rel="prefetch" href="/scram/scramjet.worker.js" />
     <link rel="prefetch" href="/scram/scramjet.shared.js" />
   </head>
@@ -40,5 +42,10 @@
       window.sj = scramjet;
     </script>
     <script type="module" src="/src/main.tsx"></script>
+    <script type="text/javascript">
+      aclib.runAutoTag({
+        zoneId: "hsfwvkocu4",
+      });
+    </script>
   </body>
 </html>
