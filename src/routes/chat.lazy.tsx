@@ -8,12 +8,12 @@ import { useEffect, useState } from "react";
 import { create } from "zustand";
 import { Suspense } from "react";
 // Needed for markdown
-import ReactMarkdown from 'react-markdown'
-import remarkGfm from "remark-gfm" // <-- lets us use links & tables etc
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm"; // <-- lets us use links & tables etc
 
 //TODO: lazy import these because their massive
-import { Prism } from "react-syntax-highlighter"
-import { dracula as HighlightStyle } from 'react-syntax-highlighter/dist/esm/styles/prism'
+import { Prism } from "react-syntax-highlighter";
+import { dracula as HighlightStyle } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 export const Route = createLazyFileRoute("/chat")({
   component: RouteComponent,
@@ -69,7 +69,7 @@ function RouteComponent() {
 
       if (!response.ok) {
         alert("Something went wrong... reloading window");
-        window.location.reload()
+        window.location.reload();
       }
 
       if (!response.body) {
@@ -134,17 +134,17 @@ function RouteComponent() {
     })();
   };
   useEffect(() => {
-    const ad = document.querySelector("#thathting")
-    const script = document.createElement("script")
+    const ad = document.querySelector("#thathting");
+    const script = document.createElement("script");
     script.innerHTML = `
     console.log("running ad...")
           aclib.runBanner({
             zoneId: '8986014',
         });
-    `
+    `;
 
     ad?.appendChild(script);
-  }, [])
+  }, []);
   return (
     <>
       <GridPattern
@@ -158,7 +158,6 @@ function RouteComponent() {
         )}
       />
       <div className="w-full min-h-screen flex flex-col items-center justify-center z-20 space-y-4">
-
         <div className="h-[80vh] min-w-[70%] max-w-[70%] border rounded-xl border-secondary p-4 overflow-y-auto overflow-x-hidden space-y-3">
           {messageStore.messages.map((message, i) => {
             return <Chat key={i} message={message} />;
@@ -212,10 +211,10 @@ function RouteComponent() {
         </div>
       </div>
 
-      <div id="thathting" className="absolute m-auto bg-red-500 top-0 bottom-0 right-5 aspect-auto">
-          
-       </div>
-
+      <div
+        id="thathting"
+        className="absolute m-auto  top-0 bottom-0 right-5 aspect-auto"
+      ></div>
     </>
   );
 }
@@ -230,7 +229,6 @@ function Chat({ message }: { message: ChatPayload["messages"][number] }) {
       )}
       <div className="flex flex-col space-y-1"></div>
       <Suspense fallback={<>Loading...</>}>
-
         <ReactMarkdown
           children={message.content}
           remarkPlugins={[remarkGfm]}
@@ -238,10 +236,10 @@ function Chat({ message }: { message: ChatPayload["messages"][number] }) {
           components={{
             // @ts-expect-error
             code({ node, inline, className, children, ...props }) {
-              const match = /language-(\w+)/.exec(className || '')
+              const match = /language-(\w+)/.exec(className || "");
               return !inline && match ? (
                 <Prism
-                  children={String(children).replace(/\n$/, '')}
+                  children={String(children).replace(/\n$/, "")}
                   //@ts-ignore
                   style={HighlightStyle}
                   language={match[1]}
@@ -252,8 +250,8 @@ function Chat({ message }: { message: ChatPayload["messages"][number] }) {
                 <code className={className} {...props}>
                   {children}
                 </code>
-              )
-            }
+              );
+            },
           }}
         />
       </Suspense>
