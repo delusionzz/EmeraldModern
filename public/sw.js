@@ -20,15 +20,12 @@ async function handleRequest(event) {
       const realurl = decodeURIComponent(encoded);
       if (realurl) {
         const url = new URL(realurl);
-        // console.log(`Posting analytics for ${url.host}${url.pathname}`);
         await postAnalytics(url.host);
       }
     }
     return await uv.fetch(event);
   } else if (scramjet.route(event)) {
-    // post to analytics
     const encoded = event.request.url.split("/~/scramjet/")[1];
-    // // console.log(`Posting analytics for ${encoded}`);
     if (!encoded.startsWith("data:")) {
       const realurl = decodeURIComponent(encoded);
       if (realurl) {

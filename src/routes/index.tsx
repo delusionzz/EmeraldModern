@@ -1,4 +1,4 @@
-import { createLazyFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import GridPattern from "@/components/ui/grid-pattern";
 import { cn } from "../lib/utils";
 import { Input } from "../components/ui/input";
@@ -44,16 +44,21 @@ import {
 import ReactGA from "react-ga4";
 import useSw from "../components/hooks/useSw";
 
-export const Route = createLazyFileRoute("/")({
-  component: Home,
-});
-
 type Sponser = {
   title: string;
   icon: string;
   url: string;
   discord: string;
 };
+const getSponsor = async (): Promise<Sponser> => {
+  const res = await fetch("/api/sponser", {});
+  return res.json();
+};
+
+export const Route = createFileRoute("/")({
+  component: Home,
+  loader: async () => await getSponsor(),
+});
 
 function Home() {
   const settingStore = useSettings();
@@ -62,7 +67,7 @@ function Home() {
   const [shouldOpen, setShouldOpen] = useState(false);
   const [openSearch, setOpenSearch] = useState(false);
   const [openSettings, setOpenSettings] = useState(false);
-  const [sponser, setSponser] = useState<Sponser>();
+  const sponser = Route.useLoaderData();
   const frame = useRef<HTMLIFrameElement>(null);
   const dock = useRef<HTMLDivElement>(null);
   useSw("/sw.js");
@@ -89,14 +94,6 @@ function Home() {
       clearTimeout(delayDebounceFn);
     };
   }, [term]);
-
-  useEffect(() => {
-    (async () => {
-      const res = await fetch("/api/sponser");
-      const sponser = await res.json();
-      setSponser(sponser as unknown as Sponser);
-    })();
-  }, []);
 
   const containerVariants = {
     hidden: {
@@ -392,7 +389,7 @@ function Home() {
           y: "-1%",
         }}
       >
-        <div className="max-w-[10rem] h-fit flex absolute bottom-5 left-[50%] translate-x-[-50%]">
+        <div className="max-w-[10rem] h-fit flex absolute bottom-5 left-[47.7%]  translate-x-[-50%]">
           {shouldOpen && (
             <div className="handle cursor-move supports-backdrop-blur:bg-white/30 supports-backdrop-blur:dark:bg-black/10 supports-backdrop-blur:dark:bg-black/10 mx-auto mt-8 flex h-[58px] w-max gap-2 rounded-2xl border p-2 backdrop-blur-md rounded-l-2xl rounded-r-none items-center">
               <AlignJustify className="w-6 h-6 text-primary" />
@@ -430,7 +427,9 @@ function Home() {
               />
             </DockIcon>
             <DockIcon>
-              <Gamepad className="w-6 h-6 hover:w-7 hover:h-7 transition-all transofrm hover:-translate-y-2" />
+              <Link to="/games">
+                <Gamepad className="w-6 h-6 hover:w-7 hover:h-7 transition-all transofrm hover:-translate-y-2" />
+              </Link>
             </DockIcon>
             <DockIcon>
               <Link to="/chat">

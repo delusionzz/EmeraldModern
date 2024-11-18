@@ -60,6 +60,10 @@ export default defineConfig({
         rewrite: (p) => p.replace(/^\/w/, ""),
         ws: true,
       },
+      "/cdn/": {
+        target: "http://localhosT:8000/",
+        rewrite: (p) => p.replace(/^\/cdn/, ""),
+      },
     },
   },
 });
