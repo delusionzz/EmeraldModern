@@ -1,11 +1,9 @@
-import * as React from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import GridPattern from "@/components/ui/grid-pattern";
 import { cn } from "@/lib/utils";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,

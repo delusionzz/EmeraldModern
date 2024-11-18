@@ -48,7 +48,7 @@ const useRuffle = (
       scale: "showAll",
       quality: "high",
     };
-    window.addEventListener("load", (event) => {
+    window.addEventListener("load", (_event) => {
       const ruffle = window.RufflePlayer.newest();
       const player = ruffle.createPlayer();
       Rufflecontainer.current.appendChild(player);

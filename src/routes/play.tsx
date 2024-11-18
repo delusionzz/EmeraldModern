@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import GridPattern from "@/components/ui/grid-pattern";
 import { cn } from "@/lib/utils";
 import { Home, FullscreenIcon, Gamepad } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import useRuffle from "@/components/hooks/useRuffle";
 type GameSearch = {
   title: string;
