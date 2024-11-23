@@ -119,17 +119,18 @@ function Home() {
       y: 100,
     },
   };
-  const canParse = (p: string) => {
-    try {
-      new URL(p);
-      return true;
-    } catch (_) {
-      return false;
-    }
+  const canParse = (val: string): boolean => {
+    val = val.trim();
+    return (
+      /^http(s?):\/\//.test(val) ||
+      (val.includes(".") && !val.startsWith(" "))
+    );
   };
-
   const handleSearch = (p?: string, isPhrase = false) => {
     if (p && canParse(p)) {
+      if (!p.startsWith("http://") && !p.startsWith("https://")) {
+        p = "https://" + p;
+      }
       setShouldOpen(true);
       const encoding = encodeURIComponent(p);
       frame.current!.src = `/~/${settingStore.proxy}/${encoding}`;
@@ -247,7 +248,7 @@ function Home() {
               onChange={(e) => setTerm(e.target.value)}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
-                  handleSearch();
+                  handleSearch(term);
                 }
               }}
             />
