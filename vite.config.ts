@@ -4,7 +4,7 @@ import path from "path";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 import { baremuxPath } from "@mercuryworkshop/bare-mux/node";
 import { libcurlPath } from "@mercuryworkshop/libcurl-transport";
-//@ts-ignore
+//@ts-expect-error ts being ts
 import { epoxyPath } from "@mercuryworkshop/epoxy-transport";
 import { uvPath } from "@titaniumnetwork-dev/ultraviolet";
 import { ViteImageOptimizer } from "vite-plugin-image-optimizer";

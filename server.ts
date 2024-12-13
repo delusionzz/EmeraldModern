@@ -46,13 +46,14 @@ const syntheticHeaders = {
   "Referrer-Policy": "origin",
 };
 
-const serverFactory = (handler, opts) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const serverFactory = (handler, _) => {
   return createServer()
     .on("request", (req, res) => {
       handler(req, res);
     })
     .on("upgrade", (req, socket, head) => {
-      // @ts-ignore          VVVVVV
+      // @ts-expect-error          VVVVVV
       wisp.routeRequest(req, socket, head);
     });
 };
