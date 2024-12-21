@@ -11,9 +11,19 @@ interface SettingState {
   cloak: "none" | "aboutBlank";
   setCloak: (cloak: "none" | "aboutBlank") => void;
   transport: {
-    path: string;
-    name: string;
+    path: "/libcurl/index.mjs" | "/epoxy/index.mjs";
+    name: "libcurl" | "epoxy";
   };
+  setTransport: (
+    path: "/libcurl/index.mjs" | "/epoxy/index.mjs",
+    name: "libcurl" | "epoxy"
+  ) => void;
+  wispUrl: string;
+  title: string;
+  setTitle: (title: string) => void;
+  icon: string;
+  setIcon: (icon: string) => void;
+  setWispUrl: (wispUrl: string) => void;
   setSearchEngine: (name: string, url: string) => void;
 }
 
@@ -25,13 +35,26 @@ const useSettings = create<SettingState>()(
         path: "/libcurl/index.mjs",
         name: "libcurl",
       },
+      setTransport: (
+        path: "/libcurl/index.mjs" | "/epoxy/index.mjs",
+        name: "libcurl" | "epoxy"
+      ) => set(() => ({ transport: { path, name } })),
       cloak: "none",
 
       setCloak: (cloak: "none" | "aboutBlank") => set(() => ({ cloak })),
+      title: "Emerald ✨",
+      setTitle: (title: string) => set(() => ({ title })),
+      icon: "/emerald.png",
+      setIcon: (icon: string) => set(() => ({ icon })),
       searchEngine: {
         name: "Google",
         url: "https://www.google.com/search?q=",
       },
+      // defaults to current websites wisp url
+      wispUrl: `${location.protocol.includes("https") ? "wss://" : "ws://"}${
+        location.host
+      }/w/`,
+      setWispUrl: (wispUrl: string) => set(() => ({ wispUrl })),
       setProxy: (proxy: "uv" | "scramjet") => set(() => ({ proxy })),
       setSearchEngine: (name: string, url: string) =>
         set(() => ({

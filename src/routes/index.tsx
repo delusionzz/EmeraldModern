@@ -4,6 +4,8 @@ import { cn } from "../lib/utils";
 import { Input } from "../components/ui/input";
 // import LetterPullup from "./components/ui/letter-pullup";
 import { useSettings } from "../store";
+import { Separator } from "@/components/ui/separator";
+
 import PopularSites from "../sites.json";
 import {
   DropdownMenu,
@@ -25,8 +27,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { Separator } from "../components/ui/separator";
 import Draggable from "react-draggable";
 import { Dock, DockIcon } from "../components/ui/dock";
 import { useEffect, useRef, useState } from "react";
@@ -43,7 +45,7 @@ import {
 } from "lucide-react";
 import ReactGA from "react-ga4";
 import useSw from "../components/hooks/useSw";
-
+import { useMeta } from "@/components/hooks/useMeta";
 type Sponser = {
   title: string;
   icon: string;
@@ -63,15 +65,19 @@ export const Route = createFileRoute("/")({
 function Home() {
   const settingStore = useSettings();
   const [term, setTerm] = useState("");
+  const [wisp, setWisp] = useState("");
   const [suggestions, setSuggestions] = useState<{ phrase: string }[]>([]);
   const [shouldOpen, setShouldOpen] = useState(false);
   const [openSearch, setOpenSearch] = useState(false);
   const [openSettings, setOpenSettings] = useState(false);
+  const [changedTitle, setChangedTitle] = useState("");
+  const [changedIcon, setChangedIcon] = useState("");
+  const [preset, setPreset] = useState("");
   const sponser = Route.useLoaderData();
   const frame = useRef<HTMLIFrameElement>(null);
   const dock = useRef<HTMLDivElement>(null);
   useSw("/sw.js");
-
+  useMeta(settingStore.title, settingStore.icon);
   ReactGA.initialize("G-PBTEBTLRLZ");
   ReactGA.event("page_view", {
     page_location: window.location.href,
@@ -122,8 +128,7 @@ function Home() {
   const canParse = (val: string): boolean => {
     val = val.trim();
     return (
-      /^http(s?):\/\//.test(val) ||
-      (val.includes(".") && !val.startsWith(" "))
+      /^http(s?):\/\//.test(val) || (val.includes(".") && !val.startsWith(" "))
     );
   };
   const handleSearch = (p?: string, isPhrase = false) => {
@@ -466,72 +471,222 @@ function Home() {
       </Draggable>
 
       <Dialog open={openSettings} onOpenChange={setOpenSettings}>
-        <DialogContent className="max-w-[30rem] border-none overflow-y-auto flex flex-col">
+        <DialogContent
+          className="max-w-[45rem] border-none overflow-y-auto flex flex-col"
+          style={{ borderRadius: 5 }}
+        >
           <DialogHeader>
-            <DialogTitle className="text-4xl">Settings</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-5xl">Settings</DialogTitle>
+            <DialogDescription className="text-base">
               Change the look or behavior of Emerald
             </DialogDescription>
           </DialogHeader>
-          <div className="flex flex-col space-y-2">
-            <h2 className="text-2xl">Proxy</h2>
-            <div className="flex justify-between px-4">
-              <h3>Current proxy</h3>
-              <Select
-                onValueChange={(e) =>
-                  settingStore.setProxy(e as "uv" | "scramjet")
-                }
+          <Tabs defaultValue="proxy">
+            <TabsList className="flex space-x-4 bg-transparent">
+              <TabsTrigger
+                value="proxy"
+                className="text-2xl p-2 hover:bg-secondary-foreground/15 hover:text-primary rounded-[0.4rem]"
               >
-                <SelectTrigger className="w-[170px] rounded-2xl">
-                  <SelectValue placeholder={`${settingStore.proxy}`} />
-                </SelectTrigger>
-                <SelectContent className="rounded-2xl">
-                  <SelectItem
-                    className="rounded-2xl"
-                    value="uv"
-                    disabled={settingStore.proxy === "uv"}
-                  >
-                    Ultraviolet
-                  </SelectItem>
-                  <SelectItem
-                    value="scramjet"
-                    className="rounded-xl hover:bg-accent/10 transition-colors cursor-pointer"
-                    disabled={settingStore.proxy === "scramjet"}
-                  >
-                    Scramjet (BETA)
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex justify-between px-4">
-              <h3>Cloak</h3>
-              <Select
-                onValueChange={(e) =>
-                  settingStore.setCloak(e as "none" | "aboutBlank")
-                }
+                Proxy
+              </TabsTrigger>
+              <TabsTrigger
+                value="appearance"
+                className="text-2xl p-2 hover:bg-secondary-foreground/15 hover:text-primary rounded-[0.4rem]"
               >
-                <SelectTrigger className="w-[170px] rounded-2xl">
-                  <SelectValue placeholder={`${settingStore.cloak}`} />
-                </SelectTrigger>
-                <SelectContent className="rounded-2xl">
-                  <SelectItem
-                    className="rounded-2xl"
-                    value="none"
-                    disabled={settingStore.cloak === "none"}
+                Appearance
+              </TabsTrigger>
+            </TabsList>
+            <TabsContent
+              value="proxy"
+              className="outline-none focus-within:ring-0"
+            >
+              <div className="flex flex-col space-y-2">
+                <Separator className="my-2" />
+                <div className="flex justify-between px-4">
+                  <h3 className="text-xl">Current proxy</h3>
+                  <Select
+                    onValueChange={(e) =>
+                      settingStore.setProxy(e as "uv" | "scramjet")
+                    }
                   >
-                    None
-                  </SelectItem>
-                  <SelectItem
-                    value="aboutBlank"
-                    className="rounded-xl hover:bg-accent/10 transition-colors cursor-pointer"
-                    disabled={settingStore.cloak === "aboutBlank"}
+                    <SelectTrigger className="w-[40%] rounded-2xl">
+                      <SelectValue placeholder={`${settingStore.proxy}`} />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-2xl">
+                      <SelectItem
+                        className="rounded-2xl"
+                        value="uv"
+                        disabled={settingStore.proxy === "uv"}
+                      >
+                        Ultraviolet
+                      </SelectItem>
+                      <SelectItem
+                        value="scramjet"
+                        className="rounded-xl hover:bg-accent/10 transition-colors cursor-pointer"
+                        disabled={settingStore.proxy === "scramjet"}
+                      >
+                        Scramjet (BETA)
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex justify-between px-4">
+                  <h3 className="text-xl">Transport</h3>
+                  <Select
+                    onValueChange={(e) =>
+                      settingStore.setTransport(
+                        (e as "libcurl" | "epoxy") == "libcurl"
+                          ? "/libcurl/index.mjs"
+                          : "/epoxy/index.mjs",
+                        e as "libcurl" | "epoxy"
+                      )
+                    }
                   >
-                    About Blank
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+                    <SelectTrigger className="w-[40%] rounded-2xl">
+                      <SelectValue
+                        placeholder={`${settingStore.transport.name}`}
+                      />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-2xl">
+                      <SelectItem
+                        className="rounded-2xl"
+                        value="libcurl"
+                        disabled={settingStore.transport.name === "libcurl"}
+                      >
+                        libcurl
+                      </SelectItem>
+                      <SelectItem
+                        value="epoxy"
+                        className="rounded-xl hover:bg-accent/10 transition-colors cursor-pointer"
+                        disabled={settingStore.transport.name === "epoxy"}
+                      >
+                        Epoxy
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex justify-between px-4">
+                  <h3 className="text-xl">Wisp Url</h3>
+                  <Input
+                    className=" w-[40%] rounded-2xl focus:border-primary "
+                    placeholder={`${settingStore.wispUrl}`}
+                    value={wisp}
+                    onChange={(e) => setWisp(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        const defaultUrl = `${location.protocol.includes("https") ? "wss://" : "ws://"}${
+                          location.host
+                        }/w/`;
+                        let u = wisp;
+                        if (!u.startsWith("ws://") || !u.startsWith("wss://")) {
+                          u = defaultUrl;
+                        }
+
+                        if (!u.endsWith("/")) {
+                          u += "/";
+                        }
+
+                        settingStore.setWispUrl(u);
+                        setWisp(u);
+                        window.location.reload();
+                      }
+                    }}
+                  />
+                </div>
+                <div className="flex justify-between px-4">
+                  <h3 className="text-xl">Cloak</h3>
+                  <Select
+                    onValueChange={(e) =>
+                      settingStore.setCloak(e as "none" | "aboutBlank")
+                    }
+                  >
+                    <SelectTrigger className="w-[40%] rounded-2xl">
+                      <SelectValue placeholder={`${settingStore.cloak}`} />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-2xl">
+                      <SelectItem
+                        className="rounded-2xl"
+                        value="none"
+                        disabled={settingStore.cloak === "none"}
+                      >
+                        None
+                      </SelectItem>
+                      <SelectItem
+                        value="aboutBlank"
+                        className="rounded-xl hover:bg-accent/10 transition-colors cursor-pointer"
+                        disabled={settingStore.cloak === "aboutBlank"}
+                      >
+                        About Blank
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </TabsContent>
+            <TabsContent value="appearance">
+              <div className="flex flex-col space-y-2">
+                <Separator className="my-2" />
+                <div className="flex justify-between px-4">
+                  <h3 className="text-xl">Site Title</h3>
+                  <Input
+                    className=" w-[40%] rounded-2xl focus:border-primary "
+                    value={changedTitle}
+                    placeholder={`${settingStore.title}`}
+                    onChange={(e) => setChangedTitle(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        settingStore.setTitle(changedTitle);
+                        setChangedTitle("");
+                        window.location.reload();
+                      }
+                    }}
+                  />
+                </div>
+                <div className="flex justify-between px-4">
+                  <h3 className="text-xl">Site Icon</h3>
+                  <Input
+                    className=" w-[40%] rounded-2xl focus:border-primary "
+                    placeholder={`${settingStore.icon}`}
+                    value={changedIcon}
+                    onChange={(e) => setChangedIcon(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        settingStore.setIcon(changedIcon);
+                        setChangedIcon("");
+                        window.location.reload();
+                      }
+                    }}
+                  />
+                </div>
+                <div className="flex flex-col items-center justify-center space-y-4">
+                  <h3 className="text-xl">Use site preset</h3>
+                  <p className="text-lg text-muted-foreground">
+                    Enter a sites url to use its icon and title (Must be a
+                    complete url with https://)
+                  </p>
+                  <Input
+                    className=" w-[40%] rounded-2xl focus:border-primary "
+                    placeholder={`https://edpuzzle.com/`}
+                    value={preset}
+                    onChange={(e) => setPreset(e.target.value)}
+                    onKeyDown={async (e) => {
+                      if (e.key === "Enter") {
+                        settingStore.setIcon(
+                          `https://www.google.com/s2/favicons?domain=${preset}`
+                        );
+                        const res = await fetch(`/api/title?url=${preset}`);
+                        const data = await res.json();
+                        settingStore.setTitle(data.title);
+
+                        setPreset("");
+                        window.location.reload();
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+            </TabsContent>
+          </Tabs>
         </DialogContent>
       </Dialog>
     </>

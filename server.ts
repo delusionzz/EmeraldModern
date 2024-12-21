@@ -9,7 +9,7 @@ import { Readable } from "node:stream";
 import fs from "node:fs";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
+import { load } from "cheerio";
 type Sponser = {
   title: string;
   icon: string;
@@ -145,6 +145,23 @@ app.post("/api/chat", async (req, res) => {
     }
   } catch (error) {
     res.status(500);
+    res.send({
+      success: false,
+      error: error,
+    });
+  }
+});
+
+app.get("/api/title", async (req, res) => {
+  const { url } = req.query as { url: string };
+  try {
+    const response = await fetch(url);
+    const html = await response.text();
+    const $ = load(html);
+    res.send({
+      title: $("title").text(),
+    });
+  } catch (error) {
     res.send({
       success: false,
       error: error,

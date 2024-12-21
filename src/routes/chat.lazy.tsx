@@ -213,7 +213,7 @@ function RouteComponent() {
 
       <div
         id="thathting"
-        className="absolute m-auto  top-0 bottom-0 right-5 aspect-auto"
+        className="absolute m-auto top-0 bottom-0 right-5 aspect-auto"
       ></div>
     </>
   );
@@ -234,13 +234,13 @@ function Chat({ message }: { message: ChatPayload["messages"][number] }) {
           remarkPlugins={[remarkGfm]}
           className={"markdownRender"}
           components={{
-            // @ts-expect-error
-            code({ node, inline, className, children, ...props }) {
+            // @ts-expect-error yap
+            code({ inline, className, children, ...props }) {
               const match = /language-(\w+)/.exec(className || "");
               return !inline && match ? (
                 <Prism
                   children={String(children).replace(/\n$/, "")}
-                  //@ts-ignore
+                  //@ts-expect-error style being weird
                   style={HighlightStyle}
                   language={match[1]}
                   PreTag="div"

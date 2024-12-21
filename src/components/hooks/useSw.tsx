@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 import { BareMuxConnection } from "@mercuryworkshop/bare-mux";
 import { useSettings } from "../../store";
-
+import { log } from "@/lib/utils";
 declare global {
   interface Window {
     Connection: BareMuxConnection;
@@ -25,45 +25,35 @@ const useSw = (path: string) => {
       if (window.sj) {
         window.sj.init(path).then(
           function (registration) {
-            console.log(
+            log.info(
               `[sw] ${path} successfuly registered with a scope of ${registration.scope}`
             );
           },
           function (err) {
-            console.log(
-              `%c[sw] ${path} failed to register, error: `,
-              "color:red;",
-              err
-            );
+            log.error(`[sw] ${path} failed to register, error: `, err);
           }
         );
       }
-      navigator.serviceWorker.ready.then((_registration) => {
+      navigator.serviceWorker.ready.then(() => {
         const connection = new BareMuxConnection("/baremux/worker.js");
         window.Connection = connection;
-        console.log(settingsStore.transport.path);
+        log.info(
+          `Setting wisp url to ${settingsStore.wispUrl} and using the transport ${settingsStore.transport.name} (${settingsStore.transport.path})`
+        );
         connection.setTransport(settingsStore.transport.path, [
           {
-            wisp: `${location.protocol.includes("https") ? "wss://" : "ws://"}${
-              location.host
-            }/w/`,
+            wisp: settingsStore.wispUrl,
           },
         ]);
-        // console.log("sending", JSON.stringify(pluginStore.plugins));
-        // registration.active?.postMessage(JSON.stringify(pluginStore.plugins));
       });
       navigator.serviceWorker.register(path).then(
         function (registration) {
-          console.log(
+          log.info(
             `[sw] ${path} successfuly registered with a scope of ${registration.scope}`
           );
         },
         function (err) {
-          console.log(
-            `%c[sw] ${path} failed to register, error: `,
-            "color:red;",
-            err
-          );
+          log.error(`[sw] ${path} failed to register, error: `, err);
         }
       );
     }
