@@ -343,7 +343,11 @@ function Home() {
                   key={index}
                   className="w-full p-2 transition-colors hover:bg-muted/15 cursor-pointer focus:bg-accent focus:text-accent-foreground border-card border rounded-2xl flex gap-4 items-center  mx-auto"
                 >
-                  <img src={site.icon} className="w-8 h-8 " alt={site.name} />
+                  <img
+                    src={site.icon}
+                    className="w-8 h-8 rounded-full"
+                    alt={site.name}
+                  />
                   <h3 className="w-full text-center sm:text-xs md:text-sm lg:text-base">
                     {site.name}
                   </h3>
