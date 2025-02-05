@@ -242,12 +242,12 @@ function Home() {
         }`}
       >
         <div className="flex-col space-y-4 flex w-full h-full items-center justify-center">
-          <h2 className="select-none font-display text-center text-2xl text-primary font-semibold  md:text-7xl md:leading-[5rem]">
+          <h2 className="select-none font-display text-center text-5xl sm:text-2xl text-primary font-semibold  md:text-7xl md:leading-[5rem]">
             Emerald
           </h2>
-          <div className="w-3/12 relative rounded-2xl focus:border-primary border border-input flex space-x-2 items-center justify-center pr-2">
+          <div className="sm:w-3/12 w-11/12 relative rounded-2xl focus:border-primary border border-input flex space-x-2 items-center justify-center pr-2">
             <Input
-              className="text-white/40 w-[95%] rounded-2xl focus-visible:ring-0 border-none"
+              className="text-white/40 sm:w-[95%] w-full rounded-2xl focus-visible:ring-0 border-none"
               placeholder={`Using ${settingStore.searchEngine.name} as search engine and ${settingStore.proxy} as proxy`}
               value={term}
               onChange={(e) => setTerm(e.target.value)}
@@ -333,10 +333,10 @@ function Home() {
             </AnimatePresence>
           </motion.div>
         </div>
-        <motion.div className="min-h-[50%] w-[16%] border border-card flex absolute right-[10rem] justify-center backdrop-blur-md p-2 bg-transparent transition-colors  rounded-2xl">
+        <motion.div className="min-h-[50%] w-[20%] xl:w-[16%] border border-card sm:flex hidden absolute right-[10rem] justify-center backdrop-blur-md p-2 bg-transparent transition-colors  rounded-2xl">
           <div className="relative w-full min-h-full flex flex-col items-center justify-center space-y-3">
             <h2 className="sm:text-xs md:text-sm lg:text-2xl">Popular sites</h2>
-            <div className="w-full h-full flex flex-col space-y-2">
+            <div className="w-full h-full flex flex-col space-y-2 ">
               {PopularSites.map((site, index) => (
                 <div
                   onClick={() => handleSearch(site.url)}
