@@ -25,7 +25,6 @@ const useSw = (path: string) => {
       if (window.sj) {
         window.sj.init(path)
         navigator.serviceWorker.register("./sw.js", {
-          scope: "/~/"
         }).then(
           function (registration) {
             log.info(
@@ -49,16 +48,7 @@ const useSw = (path: string) => {
           },
         ]);
       });
-      navigator.serviceWorker.register(path).then(
-        function (registration) {
-          log.info(
-            `[sw] ${path} successfuly registered with a scope of ${registration.scope}`
-          );
-        },
-        function (err) {
-          log.error(`[sw] ${path} failed to register, error: `, err);
-        }
-      );
+      
     }
   }, [path]);
 };
