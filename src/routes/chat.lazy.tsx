@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Bot, Send, User, Home } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 // import { create } from "zustand";
 import { Suspense } from "react";
 // Needed for markdown
@@ -33,7 +33,13 @@ function RouteComponent() {
     if (!content.trim()) return;
     setProcessing(true);
 
-    const userMessage = { role: "user", content };
+    const userMessage: {
+      content: string;
+      role: "user" | "assistant";
+    } = {
+      content,
+      role: "user",
+    };
     setMessages((prev) => [...prev, userMessage]);
     setUserInput("");
 
