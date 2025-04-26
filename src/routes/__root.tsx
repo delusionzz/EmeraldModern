@@ -1,3 +1,4 @@
+import useSw from "@/components/hooks/useSw";
 import { useSettings } from "@/store";
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import React, { Suspense } from "react";
@@ -21,7 +22,7 @@ export const Route = createRootRoute({
 
 function RenderComponent() {
   const settingStore = useSettings();
-
+  useSw("/sw.js");
   useEffect(() => {
     // console.log(window.location === window.parent.location);
     if (

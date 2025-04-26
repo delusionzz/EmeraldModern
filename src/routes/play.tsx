@@ -35,6 +35,7 @@ function RouteComponent() {
   console.log(search);
   if (search.type === GameType.FLASH) {
     console.log(search.path);
+    // eslint-disable-next-line react-hooks/rules-of-hooks
     useRuffle(
       container,
       `/cdn${decodeURIComponent(search.path)}`,

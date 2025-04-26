@@ -8,6 +8,8 @@ interface SettingState {
     name: string;
     url: string;
   };
+  siteType: "browser" | "default";
+  setSiteType: (siteType: "browser" | "default") => void;
   cloak: "none" | "aboutBlank";
   setCloak: (cloak: "none" | "aboutBlank") => void;
   transport: {
@@ -40,15 +42,17 @@ const useSettings = create<SettingState>()(
         name: "libcurl" | "epoxy"
       ) => set(() => ({ transport: { path, name } })),
       cloak: "none",
-
+      siteType: "browser",
+      setSiteType: (siteType: "browser" | "default") =>
+        set(() => ({ siteType })),
       setCloak: (cloak: "none" | "aboutBlank") => set(() => ({ cloak })),
       title: "Emerald ✨",
       setTitle: (title: string) => set(() => ({ title })),
       icon: "/emerald.png",
       setIcon: (icon: string) => set(() => ({ icon })),
       searchEngine: {
-        name: "Google",
-        url: "https://www.google.com/search?q=",
+        name: "Brave",
+        url: "https://search.brave.com/search?q=",
       },
       // defaults to current websites wisp url
       wispUrl: `${location.protocol.includes("https") ? "wss://" : "ws://"}${
