@@ -14,7 +14,6 @@ uv = new UVServiceWorker();
 const scramjet = new ScramjetServiceWorker();
 async function handleRequest(event) {
   const orig = event.request;
-
   const init = {
     method: orig.method,
     headers: orig.headers,
@@ -22,7 +21,6 @@ async function handleRequest(event) {
       orig.method !== "GET" && orig.method !== "HEAD"
         ? await orig.clone().blob()
         : undefined,
-    mode: orig.mode,
     credentials: orig.credentials,
     cache: orig.cache,
     redirect: orig.redirect,
@@ -32,6 +30,10 @@ async function handleRequest(event) {
     keepalive: orig.keepalive,
     signal: orig.signal,
   };
+
+  if (orig.mode !== "navigate") {
+    init.mode = orig.mode;
+  }
 
   const proxyReq = new Request(orig.url, init);
 
