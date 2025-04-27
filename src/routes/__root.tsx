@@ -24,7 +24,6 @@ function RenderComponent() {
   const settingStore = useSettings();
   useSw("/sw.js");
   useEffect(() => {
-    // console.log(window.location === window.parent.location);
     if (
       settingStore.cloak === "aboutBlank" &&
       window.location === window.parent.location

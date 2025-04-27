@@ -18,14 +18,13 @@ declare global {
   }
 }
 
-const useSw = (path: string) => {
+const useSw = (path: string, scope: string = "/") => {
   const settingsStore = useSettings();
   useEffect(() => {
     if ("serviceWorker" in navigator) {
       if (window.sj) {
-        window.sj.init(path)
-        navigator.serviceWorker.register("./sw.js", {
-        }).then(
+        window.sj.init(path);
+        navigator.serviceWorker.register("./sw.js", { scope }).then(
           function (registration) {
             log.info(
               `[sw] ${path} successfuly registered with a scope of ${registration.scope}`
@@ -34,7 +33,7 @@ const useSw = (path: string) => {
           function (err) {
             log.error(`[sw] ${path} failed to register, error: `, err);
           }
-        );;
+        );
       }
       navigator.serviceWorker.ready.then(() => {
         const connection = new BareMuxConnection("/baremux/worker.js");
@@ -48,7 +47,6 @@ const useSw = (path: string) => {
           },
         ]);
       });
-      
     }
   }, [path]);
 };

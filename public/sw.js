@@ -13,61 +13,44 @@ importScripts(
 uv = new UVServiceWorker();
 const scramjet = new ScramjetServiceWorker();
 async function handleRequest(event) {
-  const orig = event.request;
-  const init = {
-    method: orig.method,
-    headers: orig.headers,
-    body:
-      orig.method !== "GET" && orig.method !== "HEAD"
-        ? await orig.clone().blob()
-        : undefined,
-    credentials: orig.credentials,
-    cache: orig.cache,
-    redirect: orig.redirect,
-    referrer: orig.referrer,
-    referrerPolicy: orig.referrerPolicy,
-    integrity: orig.integrity,
-    keepalive: orig.keepalive,
-    signal: orig.signal,
-  };
+  // console.log(event);
+  try {
+    const orig = event.request;
 
-  if (orig.mode !== "navigate") {
-    init.mode = orig.mode;
+    async function tapAnalytics(url) {
+      try {
+        await fetch("/api/analytics", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ analytics: { host: url.host } }),
+        });
+      } catch (err) {
+        console.warn("Analytics post failed:", err);
+      }
+    }
+
+    await scramjet.loadConfig();
+
+    if (orig.url.startsWith(location.origin + __uv$config.prefix)) {
+      const encoded = orig.url.split(__uv$config.prefix)[1];
+      if (!encoded.startsWith("data:")) {
+        const realurl = decodeURIComponent(encoded);
+        if (realurl) await tapAnalytics(new URL(realurl).host);
+      }
+      return uv.fetch(event);
+    } else if (scramjet.route(event)) {
+      const encoded = orig.url.split("/~/scramjet/")[1];
+      if (!encoded.startsWith("data:")) {
+        const realurl = decodeURIComponent(encoded);
+        if (realurl) await tapAnalytics(new URL(realurl).host);
+      }
+      return scramjet.fetch(event);
+    }
+  } catch (error) {
+    console.error(error);
   }
 
-  const proxyReq = new Request(orig.url, init);
-
-  async function tapAnalytics(url) {
-    try {
-      await fetch("/api/analytics", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ analytics: { host: url.host } }),
-      });
-    } catch (err) {
-      console.warn("Analytics post failed:", err);
-    }
-  }
-
-  await scramjet.loadConfig();
-
-  if (orig.url.startsWith(location.origin + __uv$config.prefix)) {
-    const encoded = orig.url.split(__uv$config.prefix)[1];
-    if (!encoded.startsWith("data:")) {
-      const realurl = decodeURIComponent(encoded);
-      if (realurl) await tapAnalytics(new URL(realurl).host);
-    }
-    return uv.fetch(new FetchEvent("fetch", { request: proxyReq }));
-  } else if (scramjet.route({ request: proxyReq })) {
-    const encoded = orig.url.split("/~/scramjet/")[1];
-    if (!encoded.startsWith("data:")) {
-      const realurl = decodeURIComponent(encoded);
-      if (realurl) await tapAnalytics(new URL(realurl).host);
-    }
-    return scramjet.fetch(new FetchEvent("fetch", { request: proxyReq }));
-  }
-
-  return fetch(proxyReq);
+  return fetch(event.request);
 }
 
 self.addEventListener("fetch", (event) => {
