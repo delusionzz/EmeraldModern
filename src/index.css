@@ -4,6 +4,7 @@
 
 @layer base {
   :root {
+    --radius: 0.5rem;
     --site-bg: @apply bg-[#09090B];
     --background: 20 14.3% 4.1%;
     --foreground: 0 0% 95%;
@@ -70,15 +71,13 @@
   }
 }
 
-
 .markdownRender {
   @apply bg-muted p-2 rounded;
   p {
-    @apply text-sm text-muted-foreground 
+    @apply text-sm text-muted-foreground;
   }
 
   code {
-    @apply text-wrap
+    @apply text-wrap;
   }
-
 }

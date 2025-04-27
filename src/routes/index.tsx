@@ -13,6 +13,16 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useMeta } from "@/components/hooks/useMeta";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Obfuscate } from "@/components/obf";
 
 // Lazy-loaded home variants
 const Default = lazy(() => import("@/components/homeComponents/default"));
@@ -38,9 +48,17 @@ export const Route = createFileRoute("/")({
 function Home() {
   const settings = useSettings();
   const [loading, setLoading] = useState(true);
-
+  const [showSupportAlert, setShowSupportAlert] = useState(false);
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 1000);
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const random = Math.random() * 100 + 1;
+      if (random <= 20) setShowSupportAlert(true);
+    }, 100);
     return () => clearTimeout(timer);
   }, []);
 
@@ -58,6 +76,24 @@ function Home() {
   return (
     <>
       <OnBoarding />
+      <AlertDialog open={showSupportAlert}>
+        <AlertDialogContent className="border-none rounded-full">
+          <AlertDialogHeader>
+            <AlertDialogTitle>Share the Website!</AlertDialogTitle>
+            <AlertDialogDescription>
+              Not only does this help motivate me to continue working on emerald
+              but it lets your friends in on the fun! If you're scared about the
+              link being blocked we have plenty of more in the{" "}
+              <Obfuscate text="discord" />!
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={() => setShowSupportAlert(false)}>
+              Got it!
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       <AnimatePresence>{loading && <Loading key="loader" />}</AnimatePresence>
 

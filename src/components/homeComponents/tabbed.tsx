@@ -584,6 +584,7 @@ const TabbedHome = () => {
   const [inputUrl, setInputUrl] = useState("");
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [bookmarks, setBookmarks] = useState<Bookmark[]>(defaultBookmarks);
+  const [draggedTabId, setDraggedTabId] = useState<string | null>(null);
   const iframeRefs = useRef<{ [key: string]: HTMLIFrameElement | null }>({});
   const tabBarRef = useRef<HTMLDivElement>(null);
   const urlInputRef = useRef<HTMLInputElement>(null);
@@ -818,6 +819,36 @@ const TabbedHome = () => {
     }
   };
 
+  const handleDragStart = (e: React.DragEvent, id: string) => {
+    setDraggedTabId(id);
+    // Set a transparent drag image
+    const img = new Image();
+    img.src =
+      "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+    e.dataTransfer.setDragImage(img, 0, 0);
+  };
+
+  const handleDragOver = (e: React.DragEvent, id: string) => {
+    e.preventDefault();
+    if (!draggedTabId || draggedTabId === id) return;
+
+    const draggedTabIndex = tabs.findIndex((tab) => tab.id === draggedTabId);
+    const targetTabIndex = tabs.findIndex((tab) => tab.id === id);
+
+    if (draggedTabIndex === -1 || targetTabIndex === -1) return;
+
+    // Reorder the tabs
+    const newTabs = [...tabs];
+    const [draggedTab] = newTabs.splice(draggedTabIndex, 1);
+    newTabs.splice(targetTabIndex, 0, draggedTab);
+
+    setTabs(newTabs);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedTabId(null);
+  };
+
   const openSettings = () => {
     const settingsTabIndex = tabs.findIndex(
       (tab) => tab.url === "about:settings"
@@ -950,11 +981,17 @@ const TabbedHome = () => {
               key={tab.id}
               data-tab-id={tab.id}
               onClick={() => activateTab(tab.id)}
+              draggable
+              // @ts-expect-error blerb
+              onDragStart={(e) => handleDragStart(e, tab.id)}
+              onDragOver={(e) => handleDragOver(e, tab.id)}
+              onDragEnd={handleDragEnd}
               className={cn(
                 "flex-shrink-0 flex items-center justify-between h-9 px-3 relative rounded-t-lg mr-1 text-sm transition-all cursor-pointer group",
                 tab.isActive
                   ? "bg-card text-card-foreground shadow-sm z-10"
-                  : "bg-muted/50 text-muted-foreground hover:bg-muted/80 mt-1"
+                  : "bg-muted/50 text-muted-foreground hover:bg-muted/80 mt-1",
+                draggedTabId === tab.id && "opacity-50"
               )}
               initial={{ opacity: 0.8, y: 4 }}
               animate={{ opacity: 1, y: tab.isActive ? 0 : 4 }}
