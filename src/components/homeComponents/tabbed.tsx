@@ -558,6 +558,13 @@ const SettingsPage = () => {
                       <div className="text-sm text-muted-foreground">
                         Created with ❤️ by illusions
                       </div>
+                      <data className="text-sm text-muted-foreground">
+                        This project uses <Obfuscate text="Scramjet" /> created
+                        by mercury workshop, join their{" "}
+                        <a href="https://discord.gg/88CapFYSEd">
+                          <Obfuscate text="Discord here" />
+                        </a>
+                      </data>
                     </div>
                   </CardContent>
                 </Card>
