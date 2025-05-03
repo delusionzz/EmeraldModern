@@ -27,7 +27,6 @@ const openai = new OpenAI({
   },
 });
 
-const analyticMap = new Map<string, { host: string; count: number }>();
 let sponserFile: Sponser[] = [];
 if (fs.existsSync(path.join(__dirname, "sponsers.json"))) {
   sponserFile = JSON.parse(
@@ -90,31 +89,6 @@ app.get("/api/sponser", async (req, res) => {
   } else {
     res.send([]);
   }
-});
-
-app.post("/api/analytics", async (req, res) => {
-  const { analytics } = req.body as {
-    analytics: { host: string; path: string };
-  };
-  if (!analytics) {
-    return res.send({
-      success: false,
-      error: "Missing analytics",
-    });
-  }
-  analyticMap.set(analytics.host, {
-    host: analytics.host,
-    count: (analyticMap.get(analytics.host)?.count || 0) + 1,
-  });
-  res.send({
-    success: true,
-  });
-});
-
-app.get("/api/analytics", async (req, res) => {
-  res.send(
-    Array.from(analyticMap.entries()).sort((a, b) => b[1].count - a[1].count)
-  );
 });
 
 app.post("/api/chat", async (req, res) => {

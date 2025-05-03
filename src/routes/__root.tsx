@@ -3,7 +3,8 @@ import { useSettings } from "@/store";
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import React, { Suspense } from "react";
 import { useEffect } from "react";
-
+import { VERSION } from "@/constants";
+import { toast } from "sonner";
 const TanStackRouterDevtools =
   process.env.NODE_ENV === "production"
     ? () => null // Render nothing in production
@@ -22,7 +23,28 @@ export const Route = createRootRoute({
 
 function RenderComponent() {
   const settingStore = useSettings();
-  useSw("/sw.js");
+  useEffect(() => {
+    // check query param for version
+    const urlParams = new URLSearchParams(window.location.search);
+    const message = urlParams.get("m");
+    console.log(message);
+    if (message === `u${VERSION}`) {
+      toast.success(`Updated Emerald to version ${VERSION}`);
+      urlParams.delete("m");
+      window.history.replaceState({}, document.title, window.location.pathname);
+    }
+  }, []);
+  useEffect(() => {
+    if (settingStore.version !== VERSION) {
+      // reset all settings
+      const currentType = settingStore.siteType;
+      settingStore.setDefault();
+      settingStore.setSiteType(currentType);
+      settingStore.setVersion(VERSION);
+      window.location.href = window.location.href + "?m=u" + VERSION;
+    }
+  }, []);
+  useSw("/sw.js", "/");
   useEffect(() => {
     if (
       settingStore.cloak === "aboutBlank" &&
@@ -39,15 +61,6 @@ function RenderComponent() {
 
   return (
     <>
-      {/* <div className="p-2 flex gap-2">
-      <Link to="/" className="[&.active]:font-bold">
-        Home
-      </Link>{' '}
-      <Link to="/about" className="[&.active]:font-bold">
-        About
-      </Link>
-    </div>
-    <hr /> */}
       <Outlet />
       <Suspense>
         <TanStackRouterDevtools />

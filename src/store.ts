@@ -1,42 +1,78 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-interface SettingState {
+interface SettingValues {
+  version: string;
   proxy: "uv" | "scramjet";
-  setProxy: (proxy: "uv" | "scramjet") => void;
-  searchEngine: {
-    name: string;
-    url: string;
-  };
-  siteType: "browser" | "default";
-  setSiteType: (siteType: "browser" | "default") => void;
-  cloak: "none" | "aboutBlank";
-  setCloak: (cloak: "none" | "aboutBlank") => void;
   transport: {
     path: "/libcurl/index.mjs" | "/epoxy/index.mjs";
     name: "libcurl" | "epoxy";
   };
+  cloak: "none" | "aboutBlank";
+  siteType: "browser" | "default";
+  title: string;
+  icon: string;
+  searchEngine: {
+    name: string;
+    url: string;
+  };
+  wispUrl: string;
+  allowTabReordering: boolean;
+}
+
+interface SettingSetters {
+  setVersion: (version: string) => void;
+  setProxy: (proxy: "uv" | "scramjet") => void;
   setTransport: (
     path: "/libcurl/index.mjs" | "/epoxy/index.mjs",
     name: "libcurl" | "epoxy"
   ) => void;
-  wispUrl: string;
-  title: string;
+  setCloak: (cloak: "none" | "aboutBlank") => void;
+  setSiteType: (siteType: "browser" | "default") => void;
   setTitle: (title: string) => void;
-  icon: string;
   setIcon: (icon: string) => void;
   setWispUrl: (wispUrl: string) => void;
   setSearchEngine: (name: string, url: string) => void;
+  setDefault: () => void;
+  setAllowTabReordering: (allow: boolean) => void;
 }
 
-const useSettings = create<SettingState>()(
+const DEFAULT_SETTINGS: SettingValues = {
+  version: "1.0.0",
+  proxy: "scramjet",
+  transport: {
+    path: "/libcurl/index.mjs",
+    name: "libcurl",
+  },
+  allowTabReordering: false,
+  cloak: "none",
+  siteType: "browser",
+  title: "Emerald ✨",
+  icon: "/emerald.png",
+  searchEngine: {
+    name: "Brave",
+    url: "https://search.brave.com/search?q=",
+  },
+  wispUrl: `${location.protocol.includes("https") ? "wss://" : "ws://"}${
+    location.host
+  }/w/`,
+};
+
+type SettingsStore = SettingValues & SettingSetters;
+
+const useSettings = create<SettingsStore>()(
   persist(
     (set) => ({
-      proxy: "uv",
+      version: "1.0.0",
+      setVersion: (version: string) => set(() => ({ version })),
+      proxy: "scramjet",
       transport: {
         path: "/libcurl/index.mjs",
         name: "libcurl",
       },
+      allowTabReordering: false,
+      setAllowTabReordering: (allow: boolean) =>
+        set(() => ({ allowTabReordering: allow })),
       setTransport: (
         path: "/libcurl/index.mjs" | "/epoxy/index.mjs",
         name: "libcurl" | "epoxy"
@@ -67,6 +103,7 @@ const useSettings = create<SettingState>()(
             url,
           },
         })),
+      setDefault: () => set(() => DEFAULT_SETTINGS),
     }),
     {
       name: "settings",

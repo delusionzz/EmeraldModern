@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-
+import { VERSION } from "@/constants";
 import { BareMuxConnection } from "@mercuryworkshop/bare-mux";
 import { useSettings } from "../../store";
 import { log } from "@/lib/utils";
@@ -24,16 +24,18 @@ const useSw = (path: string, scope: string = "/") => {
     if ("serviceWorker" in navigator) {
       if (window.sj) {
         window.sj.init(path);
-        navigator.serviceWorker.register("./sw.js", { scope }).then(
-          function (registration) {
-            log.info(
-              `[sw] ${path} successfuly registered with a scope of ${registration.scope}`
-            );
-          },
-          function (err) {
-            log.error(`[sw] ${path} failed to register, error: `, err);
-          }
-        );
+        navigator.serviceWorker
+          .register(`./sw.js?v=${VERSION}`, { scope })
+          .then(
+            function (registration) {
+              log.info(
+                `[sw] ${path} successfuly registered with a scope of ${registration.scope}`
+              );
+            },
+            function (err) {
+              log.error(`[sw] ${path} failed to register, error: `, err);
+            }
+          );
       }
       navigator.serviceWorker.ready.then(() => {
         const connection = new BareMuxConnection("/baremux/worker.js");
