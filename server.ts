@@ -18,6 +18,10 @@ type Sponser = {
   discord: string;
 };
 
+const ALLOWED_MODELS = [
+  "google/gemini-2.0-flash-001"
+]
+
 const openai = new OpenAI({
   baseURL: "https://openrouter.ai/api/v1",
   apiKey: process.env.OPENROUTER_API_KEY,
@@ -97,6 +101,14 @@ app.post("/api/chat", async (req, res) => {
     return res.status(400).send({
       success: false,
       error: "Missing messages or model",
+    });
+  }
+
+  if (!ALLOWED_MODELS.includes(model)) {
+    console.log("Model not allowed:", model);
+    return res.status(400).send({
+      success: false,
+      error: "Model not allowed",
     });
   }
 

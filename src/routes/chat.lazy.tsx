@@ -118,17 +118,17 @@ function RouteComponent() {
   };
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-b from-background to-background/90">
-      <GridPattern
-        width={30}
-        height={30}
-        x={-1}
-        y={-1}
-        strokeDasharray={"1 2"}
-        className={cn(
-          `[mask-image:radial-gradient(600px_circle_at_center,white,transparent)] fixed inset-0 z-0 opacity-40`
-        )}
-      />
+    <div className="relative min-h-screen bg-gradient-to-b from-background/50 to-background/50">
+       <GridPattern
+              width={30}
+              height={30}
+              x={-1}
+              y={-1}
+              strokeDasharray={"1 2"}
+              className={cn(
+                `[mask-image:radial-gradient(600px_circle_at_center,white,transparent)] z-[0] `
+              )}
+            />
 
       {/* Welcome message when no messages */}
       {messages.length === 0 && (
@@ -139,7 +139,7 @@ function RouteComponent() {
             transition={{ duration: 0.5 }}
             className="text-center max-w-md px-6"
           >
-            <h1 className="text-4xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
+            <h1 className="text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70">
               Emerald AI
             </h1>
             <p className="text-muted-foreground">

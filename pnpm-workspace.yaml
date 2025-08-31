@@ -1,0 +1,10 @@
+packages:
+  - "./**/*"
+
+onlyBuiltDependencies:
+  - '@swc/core'
+  - bufferutil
+  - core-js
+  - esbuild
+  - sharp
+  - utf-8-validate
